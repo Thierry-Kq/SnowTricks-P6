@@ -5,17 +5,17 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ScratchController extends AbstractController
+class TrickController extends AbstractController
 {
     /**
-     * @Route("/scratch", name="scratch")
+     * @Route("/", name="homepage")
      */
     public function index()
     {
         return $this->render(
-            'scratch/index.html.twig',
+            'trick/homepage.html.twig',
             [
-                'controller_name' => 'ScratchController',
+                'controller_name' => 'TrickController',
             ]
         );
     }
