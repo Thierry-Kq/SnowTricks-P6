@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Images;
 use App\Entity\Tricks;
 use App\Entity\User;
 use App\Form\TricksType;
 use App\Repository\TricksRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -47,6 +49,24 @@ class TricksController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            // get images here
+            $images = $form->get('images')->getData();
+
+            foreach ($images as $image) {
+                $fichier = md5(uniqid()) . '.' . $image->guessExtension();
+
+                $image->move(
+                    $this->getParameter('images_directory'),
+                    $fichier
+                );
+
+                $img = new Images();
+                $img->setName($fichier);
+                $trick->addImage($img);
+                // image stockee sur disque, on stock le nom en bdd
+            }
+
             $entityManager->persist($trick);
             $entityManager->flush();
 
@@ -88,12 +108,31 @@ class TricksController extends AbstractController
 
         $user = $this->getUser();
 
+        // if not logged = bug
         // deny access if not author or admin
-        if ($user->getId() != $trick->getAuthor()->getId()) {
-            $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        }
+//        if ($user->getId() != $trick->getAuthor()->getId()) {
+//            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+//        }
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // get images here
+            $images = $form->get('images')->getData();
+
+            foreach ($images as $image) {
+                $fichier = md5(uniqid()) . '.' . $image->guessExtension();
+
+                $image->move(
+                    $this->getParameter('images_directory'),
+                    $fichier
+                );
+
+                $img = new Images();
+                $img->setName($fichier);
+                $trick->addImage($img);
+                // image stockee sur disque, on stock le nom en bdd
+            }
+
+
             $this->getDoctrine()->getManager()->flush();
 
 //            return $this->redirectToRoute('trick', ['id' => $trick->getId()]);
@@ -122,5 +161,31 @@ class TricksController extends AbstractController
         }
 
         return $this->redirectToRoute('tricks_index');
+    }
+
+    /**
+     * @Route("/delete/image/{id}", name="tricks_image_delete", methods={"DELETE"})
+     */
+    public function deleteImage(
+        Images $image,
+        Request $request
+    ) {
+        $data = json_decode($request->getContent(), true);
+
+        if ($this->isCsrfTokenValid('delete' . $image->getId(), $data['_token'])) {
+            // on recup le nom de l image et on suppr le fichier
+            // peut importe l'ordre, bdd puis directory ou directory puis bdd
+            $nom = $image->getName();
+            unlink($this->getParameter('images_directory') . '/' . $nom);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($image);
+            $em->flush();
+
+            // on repond en json
+            return new JsonResponse(['success' => 1]);
+        }
+
+        return new JsonResponse(['error' => 'Token Invalide'], 400);
     }
 }

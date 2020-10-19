@@ -1,4 +1,16 @@
 {{ form_start(form) }}
     {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+
+    {# if edit : display image #}
+
+{% if app.request.attributes.get('_route') == 'tricks_edit' %}
+    <h2>Images</h2>
+    {% for image in trick.images %}
+        <div>
+            <img src="{{ asset('/uploads/' ~ image.name) }}" alt="Image">
+            <a href="{{ path('tricks_image_delete', {'id': image.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Delete</a>
+        </div>
+    {% endfor %}
+{% endif %}
+<button class="btn">{{ button_label|default('Save') }}</button>
 {{ form_end(form) }}

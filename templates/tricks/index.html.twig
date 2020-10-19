@@ -13,6 +13,7 @@
                 <th>Id</th>
                 <th>Title</th>
                 <th>Description</th>
+                <th>Nbr images</th>
                 <th>actions</th>
             </tr>
             </thead>
@@ -22,6 +23,7 @@
                     <td>{{ trick.id }}</td>
                     <td>{{ trick.title }}</td>
                     <td>{{ trick.description }}</td>
+                    <td>{{ trick.images|length }}</td>
                     <td>
                         <a href="{{ path('tricks_show', {'id': trick.id}) }}">show</a>
                         <a href="{{ path('tricks_edit', {'id': trick.id}) }}">edit</a>
