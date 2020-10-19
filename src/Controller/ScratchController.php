@@ -20,7 +20,7 @@ class ScratchController extends AbstractController
     {
 
 
-        return $this->render('trick/homepage.html.twig');
+        return $this->render('homepage.html.twig');
     }
 
     /**

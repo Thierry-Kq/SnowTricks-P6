@@ -3,40 +3,44 @@
 {% block title %}Tricks index{% endblock %}
 
 {% block body %}
-    <h1>Tricks index</h1>
+    <div class="container">
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>Title</th>
-            <th>Description</th>
-            <th>actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for trick in tricks %}
+        <h1>Tricks index</h1>
+
+        <table class="table">
+            <thead>
             <tr>
-                <td>{{ trick.id }}</td>
-                <td>{{ trick.title }}</td>
-                <td>{{ trick.description }}</td>
-                <td>
-                    <a href="{{ path('tricks_show', {'id': trick.id}) }}">show</a>
-                    <a href="{{ path('tricks_edit', {'id': trick.id}) }}">edit</a>
-                </td>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>actions</th>
             </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
-            </tr>
-        {% endfor %}
+            </thead>
+            <tbody>
+            {% for trick in tricks %}
+                <tr>
+                    <td>{{ trick.id }}</td>
+                    <td>{{ trick.title }}</td>
+                    <td>{{ trick.description }}</td>
+                    <td>
+                        <a href="{{ path('tricks_show', {'id': trick.id}) }}">show</a>
+                        <a href="{{ path('tricks_edit', {'id': trick.id}) }}">edit</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">no records found</td>
+                </tr>
+            {% endfor %}
 
-        {% for trick in tricks %}
-            <a href="{{ path('tricks_show', {'id' : trick.id}) }}">Link to trick {{ trick.id }}</a>
-            {{ dump(trick) }}
-        {% endfor %}
-        </tbody>
-    </table>
+            {% for trick in tricks %}
+                <a href="{{ path('tricks_show', {'id' : trick.id}) }}">Link to trick {{ trick.id }}</a>
+                {{ dump(trick) }}
+            {% endfor %}
+            </tbody>
+        </table>
 
-    <a href="{{ path('tricks_new') }}">Create new</a>
+        <a href="{{ path('tricks_new') }}">Create new</a>
+    </div>
+
 {% endblock %}
