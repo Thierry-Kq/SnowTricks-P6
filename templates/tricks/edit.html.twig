@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Tricks{% endblock %}
+
+{% block body %}
+
+    {# TODO : gerer autrement le app.user null / role_user maybe ? #}
+    {# {% if (app.user == null) or (trick.author.id != app.user.id) or not is_granted('ROLE_ADMIN') %} #}
+    {% if not is_granted('ROLE_USER') or (trick.author.id != app.user.id) and not is_granted('ROLE_ADMIN') %}
+        {{ include('security/deny.html.twig') }}
+    {% else %}
+        <h1>Edit Tricks</h1>
+
+        {{ include('tricks/_form.html.twig', {'button_label': 'Update'}) }}
+
+        <a href="{{ path('tricks_index') }}">back to list</a>
+
+        {{ include('tricks/_delete_form.html.twig') }}
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+
+    <script src="{{ asset('js/images.js') }}"></script>
+{% endblock %}

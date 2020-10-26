@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tricks{% endblock %}
+
+{% block body %}
+    {{ dump(trick) }}
+    {% if app.user and app.user.id == trick.author.id %}
+        <p>proprietaire de cet article, tu peux edit</p>
+        <a href="{{ path('tricks_edit', {'id' : trick.id}) }}">edit the trick {{ trick.id }}</a>
+    {% elseif is_granted('ROLE_ADMIN') %}
+        <p>cet article nest pas a toi mais t'es admin donc ok</p>
+        <a href="{{ path('tricks_edit', {'id' : trick.id}) }}">edit the trick {{ trick.id }}</a>
+    {% else %}
+        <p>cet article nest pas a toi tu peux pas edit</p>
+    {% endif %}
+
+    <h1>Tricks</h1>
+
+    <table class="table">
+        <tbody>
+        <tr>
+            <th>Id</th>
+            <td>{{ trick.id }}</td>
+        </tr>
+        <tr>
+            <th>Title</th>
+            <td>{{ trick.title }}</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>{{ trick.description }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('tricks_index') }}">back to list</a>
+
+    <a href="{{ path('tricks_edit', {'id': trick.id}) }}">edit</a>
+
+    {{ include('tricks/_delete_form.html.twig') }}
+{% endblock %}

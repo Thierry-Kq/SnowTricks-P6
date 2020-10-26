@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <p>dashboard</p>
+
+
+    {% if app.user and app.user.image is not null %}
+        <img src="{{ asset('/uploads/' ~ app.user.image.name) }}" alt="Image" width="600px">
+        {# TODO : suppr / remplacer l'image de login #}
+        {{ dump(app.user.image) }}
+    {% endif %}
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+
+    {# {% for image in trick.images %} #}
+    {# <div style="border: solid  #0a0a0a"> #}
+    {# <img src="{{ asset('/uploads/' ~ image.name) }}" alt="Image" width="600px"> #}
+    {# <a href="{{ path('tricks_image_delete', {'id': image.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Delete</a> #}
+    {# </div> #}
+    {# {% endfor %} #}
+    <button class="btn">{{ button_label|default('Save') }}</button>
+    {{ form_end(form) }}
+
+
+
+{% endblock %}
