@@ -102,6 +102,8 @@ class TricksController extends AbstractController
      */
     public function edit(Request $request, Tricks $trick): Response
     {
+
+
         $form = $this->createForm(TricksType::class, $trick);
         $form->handleRequest($request);
 
@@ -157,6 +159,13 @@ class TricksController extends AbstractController
     {
         if ($this->isCsrfTokenValid('delete' . $trick->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
+
+            foreach ($trick->getImages() as $img) {
+                $nom = $img->getName();
+                unlink($this->getParameter('images_directory') . '/' . $nom); // supprime le fichier dans uploads
+                $trick->removeImage($img); // supprime le trickId dans image
+                // les images seront delete en base car orphanRemoval=true dans la relation Tricks->Images
+            }
             $entityManager->remove($trick);
             $entityManager->flush();
         }
