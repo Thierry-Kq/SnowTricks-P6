@@ -27,6 +27,11 @@ class Images
      */
     private $user;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Tricks::class, inversedBy="images")
+     */
+    private $tricks;
+
 
     public function getId(): ?int
     {
@@ -59,6 +64,18 @@ class Images
         if ($user->getImage() !== $newImage) {
             $user->setImage($newImage);
         }
+
+        return $this;
+    }
+
+    public function getTricks(): ?Tricks
+    {
+        return $this->tricks;
+    }
+
+    public function setTricks(?Tricks $tricks): self
+    {
+        $this->tricks = $tricks;
 
         return $this;
     }

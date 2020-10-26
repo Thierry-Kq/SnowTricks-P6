@@ -69,8 +69,8 @@ class SecurityController extends AbstractController
                 );
                 $img = new Images();
                 $img->setName($fichier);
-                $user->removeImages($img);
-                $user->setImages($img);
+//                $user->removeImages($img);
+                $user->setImage($img);
                 // image stockee sur disque, on stock le nom en bdd
 //                dd($fichier, $image, $img, $user);
 //            }

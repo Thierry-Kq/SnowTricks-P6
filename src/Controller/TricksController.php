@@ -129,6 +129,7 @@ class TricksController extends AbstractController
                 $img = new Images();
                 $img->setName($fichier);
                 $trick->addImage($img);
+                $this->getDoctrine()->getManager()->persist($trick);
                 // image stockee sur disque, on stock le nom en bdd
             }
 

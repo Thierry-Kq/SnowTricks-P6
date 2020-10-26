@@ -3,10 +3,10 @@
     <p>dashboard</p>
 
 
-    {% if app.user %}
-        <img src="{{ asset('/uploads/' ~ app.user.images.name) }}" alt="Image" width="600px">
+    {% if app.user and app.user.image is not null %}
+        <img src="{{ asset('/uploads/' ~ app.user.image.name) }}" alt="Image" width="600px">
         {# TODO : suppr / remplacer l'image de login #}
-        {{ dump(app.user.images) }}
+        {{ dump(app.user.image) }}
     {% endif %}
 
 
