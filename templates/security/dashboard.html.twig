@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <p>dashboard</p>
-
+    
 
     {% if app.user and app.user.image is not null %}
         <img src="{{ asset('/uploads/' ~ app.user.image.name) }}" alt="Image" width="600px">
@@ -9,12 +9,8 @@
         {{ dump(app.user.image) }}
     {% endif %}
 
-
-
-
     {{ form_start(form) }}
     {{ form_widget(form) }}
-
 
     {# {% for image in trick.images %} #}
     {# <div style="border: solid  #0a0a0a"> #}
