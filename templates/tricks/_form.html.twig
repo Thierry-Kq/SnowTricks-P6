@@ -6,8 +6,8 @@
 {% if app.request.attributes.get('_route') == 'tricks_edit' %}
     <h2>Images</h2>
     {% for image in trick.images %}
-        <div>
-            <img src="{{ asset('/uploads/' ~ image.name) }}" alt="Image">
+        <div style="border: solid  #0a0a0a">
+            <img src="{{ asset('/uploads/' ~ image.name) }}" alt="Image" width="600px">
             <a href="{{ path('tricks_image_delete', {'id': image.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Delete</a>
         </div>
     {% endfor %}

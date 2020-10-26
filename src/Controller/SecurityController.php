@@ -2,7 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Images;
+use App\Form\UserType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -32,5 +36,50 @@ class SecurityController extends AbstractController
     public function logout()
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    /**
+     * @Route ("/dashboard", name="app_dashboard")
+     */
+    public function dashboard(
+        Request $request,
+        EntityManagerInterface $entityManager
+    ) {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        $user = $this->getUser();
+        $form = $this->createForm(UserType::class, $user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // get images here
+            $image = $form->get('images')->getData();
+
+//            foreach ($images as $image) {
+            if ($image !== null) {
+
+                $fichier = md5(uniqid()) . '.' . $image->guessExtension();
+
+
+                $image->move(
+                    $this->getParameter('images_directory'),
+                    $fichier
+                );
+                $img = new Images();
+                $img->setName($fichier);
+                $user->removeImages($img);
+                $user->setImages($img);
+                // image stockee sur disque, on stock le nom en bdd
+//                dd($fichier, $image, $img, $user);
+//            }
+            }
+
+            $entityManager->persist($user);
+            $entityManager->flush();
+        }
+
+        return $this->render('security/dashboard.html.twig', ['form' => $form->createView()]);
     }
 }

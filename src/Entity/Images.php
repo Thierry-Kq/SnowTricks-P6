@@ -23,10 +23,10 @@ class Images
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Tricks::class, inversedBy="images")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToOne(targetEntity=User::class, mappedBy="image", cascade={"persist", "remove"})
      */
-    private $tricks;
+    private $user;
+
 
     public function getId(): ?int
     {
@@ -45,14 +45,20 @@ class Images
         return $this;
     }
 
-    public function getTricks(): ?Tricks
+    public function getUser(): ?User
     {
-        return $this->tricks;
+        return $this->user;
     }
 
-    public function setTricks(?Tricks $tricks): self
+    public function setUser(?User $user): self
     {
-        $this->tricks = $tricks;
+        $this->user = $user;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newImage = null === $user ? null : $this;
+        if ($user->getImage() !== $newImage) {
+            $user->setImage($newImage);
+        }
 
         return $this;
     }
