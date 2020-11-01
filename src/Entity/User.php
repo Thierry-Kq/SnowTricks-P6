@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @UniqueEntity(fields={"username"}, message="There is already an account with this username")
+ * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
  */
 class User implements UserInterface
 {
@@ -47,6 +48,11 @@ class User implements UserInterface
      * @ORM\OneToOne(targetEntity=Images::class, inversedBy="user", cascade={"persist", "remove"})
      */
     private $image;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $email;
 
 
     public function __construct()
@@ -166,6 +172,18 @@ class User implements UserInterface
     public function setImage(?Images $image): self
     {
         $this->image = $image;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }

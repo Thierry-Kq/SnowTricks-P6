@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Images;
 use App\Form\UserType;
+use App\Service\ImagesService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +22,6 @@ class SecurityController extends AbstractController
         // if ($this->getUser()) {
         //     return $this->redirectToRoute('target_path');
         // }
-
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
@@ -43,41 +43,28 @@ class SecurityController extends AbstractController
      */
     public function dashboard(
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        ImagesService $imagesService
     ) {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
         }
         $user = $this->getUser();
         $form = $this->createForm(UserType::class, $user);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // get images here
             $image = $form->get('images')->getData();
-
-//            foreach ($images as $image) {
             if ($image !== null) {
-
-                $fichier = md5(uniqid()) . '.' . $image->guessExtension();
-
-
-                $image->move(
-                    $this->getParameter('images_directory'),
-                    $fichier
-                );
-                $img = new Images();
-                $img->setName($fichier);
-//                $user->removeImages($img);
-                $user->setImage($img);
-                // image stockee sur disque, on stock le nom en bdd
-//                dd($fichier, $image, $img, $user);
-//            }
+                $oldImage = $user->getImage() ?: null;
+                $imagesService->addImages($image, $user, $this->getParameter('images_directory'));
             }
 
             $entityManager->persist($user);
             $entityManager->flush();
+            if ($oldImage) {
+                $imagesService->deleteImage($oldImage, $this->getParameter('images_directory') . '/' . $oldImage->getName());
+            }
         }
 
         return $this->render('security/dashboard.html.twig', ['form' => $form->createView()]);

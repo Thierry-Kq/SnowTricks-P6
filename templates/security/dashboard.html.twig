@@ -4,10 +4,20 @@
 
 
     {% if app.user and app.user.image is not null %}
-        <img src="{{ asset('/uploads/' ~ app.user.image.name) }}" alt="Image" width="600px">
-        {# TODO : suppr / remplacer l'image de login #}
-        {{ dump(app.user.image) }}
+        {% set image_source = asset('/uploads/' ~ app.user.image.name) %}
+    {% else %}
+        {% set image_source = asset('/img/unknow.jpg') %}
     {% endif %}
+
+    <div class="row">
+        <div class="col-4">
+            <img src="{{ image_source }}" alt="Image" style="width:100px; height:100px; border-radius: 50%;">
+        </div>
+        <div class="col-8">
+            {{ dump(app.user) }}
+        </div>
+    </div>
+    {# TODO : suppr / remplacer l'image de login #}
 
     {{ form_start(form) }}
     {{ form_widget(form) }}

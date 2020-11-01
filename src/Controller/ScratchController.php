@@ -9,6 +9,8 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ScratchController extends AbstractController
@@ -26,8 +28,10 @@ class ScratchController extends AbstractController
     /**
      * @Route("/scratch", name="scratch")
      */
-    public function scratch()
+    public function scratch(MailerInterface $mailer)
     {
+
+
         return $this->render('scratch/index.html.twig');
     }
 }
