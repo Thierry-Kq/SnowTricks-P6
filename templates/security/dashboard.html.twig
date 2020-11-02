@@ -2,25 +2,44 @@
 {% block body %}
     <p>dashboard</p>
 
-
     {% if app.user and app.user.image is not null %}
-        <img src="{{ asset('/uploads/' ~ app.user.image.name) }}" alt="Image" width="600px">
-        {# TODO : suppr / remplacer l'image de login #}
-        {{ dump(app.user.image) }}
+        {% set image_source = asset('/uploads/' ~ app.user.image.name) %}
+    {% else %}
+        {% set image_source = asset('/img/unknow.jpg') %}
     {% endif %}
 
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
+    <div class="row">
+        <div class="col-4">
+            <img src="{{ image_source }}" alt="Image" style="width:100px; height:100px; border-radius: 50%;">
+        </div>
+        <div class="col-8">
+            {{ dump(app.user) }}
+        </div>
+    </div>
+    <div class="debug">
+        <h1>DELETE ACCOUNT</h1>
+        {{ include('security/_delete_form.html.twig') }}
+    </div>
 
-    {# {% for image in trick.images %} #}
-    {# <div style="border: solid  #0a0a0a"> #}
-    {# <img src="{{ asset('/uploads/' ~ image.name) }}" alt="Image" width="600px"> #}
-    {# <a href="{{ path('tricks_image_delete', {'id': image.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Delete</a> #}
-    {# </div> #}
-    {# {% endfor %} #}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-    {{ form_end(form) }}
+    <div class="debug">
+        <h1>ADD/CHANGE IMAGE</h1>
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
 
-
-
+        {# {% for image in trick.images %} #}
+        {# <div style="border: solid  #0a0a0a"> #}
+        {# <img src="{{ asset('/uploads/' ~ image.name) }}" alt="Image" width="600px"> #}
+        {# <a href="{{ path('tricks_image_delete', {'id': image.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Delete</a> #}
+        {# </div> #}
+        {# {% endfor %} #}
+        <button class="btn">{{ button_label|default('Save') }}</button>
+        {{ form_end(form) }}
+    </div>
+    <div class="debug">
+        <h1>CHANGE PASSWORD</h1>
+        {{ form_start(passwordForm) }}
+        {{ form_widget(passwordForm) }}
+        <button class="btn">{{ button_label|default('Save') }}</button>
+        {{ form_end(passwordForm) }}
+    </div>
 {% endblock %}

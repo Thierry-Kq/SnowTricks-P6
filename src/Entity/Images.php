@@ -23,7 +23,7 @@ class Images
     private $name;
 
     /**
-     * @ORM\OneToOne(targetEntity=User::class, mappedBy="image", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=User::class, mappedBy="image", orphanRemoval=true, cascade={"persist", "remove"})
      */
     private $user;
 

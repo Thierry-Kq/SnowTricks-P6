@@ -7,6 +7,7 @@ use App\Entity\Tricks;
 use App\Entity\User;
 use App\Form\TricksType;
 use App\Repository\TricksRepository;
+use App\Service\ImagesService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -37,7 +38,8 @@ class TricksController extends AbstractController
      */
     public function new(
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        ImagesService $imagesService
     ) {
         $user = $this->getUser();
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -54,20 +56,8 @@ class TricksController extends AbstractController
             $images = $form->get('images')->getData();
 
             foreach ($images as $image) {
-                $fichier = md5(uniqid()) . '.' . $image->guessExtension();
-
-                $image->move(
-                    $this->getParameter('images_directory'),
-                    $fichier
-                );
-
-                $img = new Images();
-                $img->setName($fichier);
-                $trick->addImage($img);
-                // image stockee sur disque, on stock le nom en bdd
+                $imagesService->addImages($image, $trick, $this->getParameter('images_directory'));
             }
-
-            $entityManager->persist($trick);
             $entityManager->flush();
 
             return $this->redirectToRoute('tricks_index');
@@ -100,8 +90,11 @@ class TricksController extends AbstractController
     /**
      * @Route("/{id}/edit", name="tricks_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, Tricks $trick): Response
-    {
+    public function edit(
+        Request $request,
+        Tricks $trick,
+        ImagesService $imagesService
+    ): Response {
 
 
         $form = $this->createForm(TricksType::class, $trick);
@@ -121,20 +114,8 @@ class TricksController extends AbstractController
             $images = $form->get('images')->getData();
 
             foreach ($images as $image) {
-                $fichier = md5(uniqid()) . '.' . $image->guessExtension();
-
-                $image->move(
-                    $this->getParameter('images_directory'),
-                    $fichier
-                );
-
-                $img = new Images();
-                $img->setName($fichier);
-                $trick->addImage($img);
-                $this->getDoctrine()->getManager()->persist($trick);
-                // image stockee sur disque, on stock le nom en bdd
+                $imagesService->addImages($image, $trick, $this->getParameter('images_directory'));
             }
-
 
             $this->getDoctrine()->getManager()->flush();
 
@@ -178,19 +159,13 @@ class TricksController extends AbstractController
      */
     public function deleteImage(
         Images $image,
-        Request $request
+        Request $request,
+        ImagesService $imagesService
     ) {
         $data = json_decode($request->getContent(), true);
 
         if ($this->isCsrfTokenValid('delete' . $image->getId(), $data['_token'])) {
-            // on recup le nom de l image et on suppr le fichier
-            // peut importe l'ordre, bdd puis directory ou directory puis bdd
-            $nom = $image->getName();
-            unlink($this->getParameter('images_directory') . '/' . $nom);
-
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($image);
-            $em->flush();
+            $imagesService->deleteImage($image, $this->getParameter('images_directory') . '/' . $image->getName());
 
             // on repond en json
             return new JsonResponse(['success' => 1]);

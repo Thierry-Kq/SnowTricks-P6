@@ -4,15 +4,19 @@
 
 {% block body %}
     {{ dump(trick) }}
-    {% if app.user and app.user.id == trick.author.id %}
-        <p>proprietaire de cet article, tu peux edit</p>
-        <a href="{{ path('tricks_edit', {'id' : trick.id}) }}">edit the trick {{ trick.id }}</a>
-    {% elseif is_granted('ROLE_ADMIN') %}
-        <p>cet article nest pas a toi mais t'es admin donc ok</p>
-        <a href="{{ path('tricks_edit', {'id' : trick.id}) }}">edit the trick {{ trick.id }}</a>
-    {% else %}
-        <p>cet article nest pas a toi tu peux pas edit</p>
-    {% endif %}
+    <div class="debug">
+        {% if app.user and app.user.id == trick.author.id %}
+            <h1 class="debug-title">PROPRIO</h1>
+            <p>proprietaire de cet article, tu peux edit</p>
+            <a href="{{ path('tricks_edit', {'id' : trick.id}) }}">edit the trick {{ trick.id }}</a>
+        {% elseif is_granted('ROLE_ADMIN') %}
+            <p>cet article nest pas a toi mais t'es admin donc ok</p>
+            <a href="{{ path('tricks_edit', {'id' : trick.id}) }}">edit the trick {{ trick.id }}</a>
+        {% else %}
+            <h1 class="debug-title">PROPRIO</h1>
+            <p>cet article nest pas a toi tu peux pas edit</p>
+        {% endif %}
+    </div>
 
     <h1>Tricks</h1>
 

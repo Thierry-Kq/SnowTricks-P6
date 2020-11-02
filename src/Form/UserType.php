@@ -15,7 +15,7 @@ class UserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username')
+//            ->add('username')
             ->add(
                 'images', // pas lié a la bdd
                 FileType::class,
@@ -27,6 +27,7 @@ class UserType extends AbstractType
                 ]
             );
     }
+
 
     public function configureOptions(OptionsResolver $resolver)
     {

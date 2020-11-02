@@ -19,6 +19,17 @@ class TricksRepository extends ServiceEntityRepository
         parent::__construct($registry, Tricks::class);
     }
 
+
+    public function getAllTrick()
+    {
+        return $this->createQueryBuilder('t')
+            ->leftJoin('t.author', 'a')
+            ->addSelect('a')
+            ->orderBy('t.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return Tricks[] Returns an array of Tricks objects
     //  */
