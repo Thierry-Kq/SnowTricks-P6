@@ -58,6 +58,7 @@ class TricksController extends AbstractController
             foreach ($images as $image) {
                 $imagesService->addImages($image, $trick, $this->getParameter('images_directory'));
             }
+            $entityManager->persist($trick);
             $entityManager->flush();
 
             return $this->redirectToRoute('tricks_index');

@@ -10,6 +10,11 @@ use Doctrine\ORM\EntityManagerInterface;
 class ImagesService
 {
 
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -38,6 +43,9 @@ class ImagesService
 
     /**
      * delete img from bdd & from repository
+     *
+     * @param Images $image
+     * @param        $path
      */
     public function deleteImage(
         Images $image,

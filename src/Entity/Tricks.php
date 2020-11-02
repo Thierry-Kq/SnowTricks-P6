@@ -3,12 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\TricksRepository;
+use App\Service\ToolsService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 
 /**
  * @ORM\Entity(repositoryClass=TricksRepository::class)
+ * @HasLifecycleCallbacks
  */
 class Tricks
 {
@@ -38,6 +41,11 @@ class Tricks
      * @ORM\OneToMany(targetEntity=Images::class, mappedBy="tricks", orphanRemoval=true, cascade={"persist", "remove"})
      */
     private $images;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $slug;
 
     public function __construct()
     {
@@ -114,6 +122,29 @@ class Tricks
         }
 
         return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PrePersist()
+     */
+    public function initializeSlug()
+    {
+        $tools = new ToolsService();
+        if ($this->slug === null) {
+            $this->slug = $tools->slugify($this);
+        }
     }
 
 }
