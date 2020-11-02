@@ -17,7 +17,7 @@
             {{ dump(app.user) }}
         </div>
     </div>
-    {# TODO : suppr / remplacer l'image de login #}
+    {{ include('security/_delete_form.html.twig') }}
 
     {{ form_start(form) }}
     {{ form_widget(form) }}

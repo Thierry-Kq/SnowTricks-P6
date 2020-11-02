@@ -40,7 +40,7 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @ORM\OneToMany(targetEntity=Tricks::class, mappedBy="author", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Tricks::class, mappedBy="author")
      */
     private $tricks;
 

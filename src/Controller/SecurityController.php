@@ -3,12 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Images;
+use App\Entity\User;
 use App\Form\UserType;
+use App\Repository\UserRepository;
 use App\Service\ImagesService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
@@ -68,5 +71,34 @@ class SecurityController extends AbstractController
         }
 
         return $this->render('security/dashboard.html.twig', ['form' => $form->createView()]);
+    }
+
+    /**
+     * @Route("/delete-account/{id}", name="app_delete_user", methods={"DELETE"})
+     */
+    public function delete(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        User $user,
+        UserRepository $userRepository
+    ): Response {
+        if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token'))) {
+            $snowTricksAccount = $userRepository->findOneBy(['id' => 1]);
+            foreach ($user->getTricks() as $trick) {
+                $trick->setAuthor($snowTricksAccount);
+                $entityManager->persist($trick);
+                $entityManager->flush();
+            }
+
+            $entityManager->remove($user);
+            $entityManager->flush();
+            
+            $session = new Session();
+            $session->invalidate();
+
+            return $this->redirectToRoute('app_logout');
+        }
+
+        return $this->redirectToRoute('homepage');
     }
 }
