@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\TricksType;
 use App\Repository\TricksRepository;
 use App\Service\ImagesService;
+use App\Service\ToolsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -76,7 +77,7 @@ class TricksController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="tricks_show", methods={"GET"})
+     * @Route("/{slug}", name="tricks_show", methods={"GET"})
      */
     public function show(Tricks $trick): Response
     {
@@ -89,7 +90,7 @@ class TricksController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit", name="tricks_edit", methods={"GET","POST"})
+     * @Route("/{slug}/edit", name="tricks_edit", methods={"GET","POST"})
      */
     public function edit(
         Request $request,
@@ -121,8 +122,7 @@ class TricksController extends AbstractController
             $this->getDoctrine()->getManager()->flush();
 
 //            return $this->redirectToRoute('trick', ['id' => $trick->getId()]);
-
-            return $this->redirectToRoute('tricks_index');
+            return $this->redirectToRoute('tricks_show', ['slug' => $trick->getSlug()]);
         }
 
         return $this->render(
@@ -173,5 +173,25 @@ class TricksController extends AbstractController
         }
 
         return new JsonResponse(['error' => 'Token Invalide'], 400);
+    }
+
+//    TODO : test if i can edit with url, no button (csrfToken ??)
+
+    /**
+     * @Route("/{slug}/edit-slug", name="edit_slug")
+     */
+    public function editSlug(
+        Request $request,
+        Tricks $trick,
+        EntityManagerInterface $entityManager,
+        ToolsService $tools
+    ) {
+
+        $slug = ($request->getContent() === "") ? $tools->slugify($trick) : $tools->slugify($trick, $request->getContent());
+        $trick->setSlug($slug);
+        $entityManager->persist($trick);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('tricks_show', ['slug' => $slug]);
     }
 }
