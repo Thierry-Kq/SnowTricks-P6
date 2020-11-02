@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Images;
 use App\Entity\User;
+use App\Form\ChangePasswordType;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use App\Service\ImagesService;
@@ -58,26 +59,39 @@ class SecurityController extends AbstractController
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
+        $passwordForm = $this->createForm(ChangePasswordType::class, $user);
+        $passwordForm->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $image = $form->get('images')->getData();
             if ($image !== null) {
                 $oldImage = $user->getImage() ?: null;
                 $imagesService->addImages($image, $user, $this->getParameter('images_directory'));
             }
-            $user->setPassword(
-                $passwordEncoder->encodePassword(
-                    $user,
-                    $form->get('password')->getData()
-                )
-            );
             $entityManager->persist($user);
             $entityManager->flush();
             if ($image !== null && $oldImage) {
                 $imagesService->deleteImage($oldImage, $this->getParameter('images_directory') . '/' . $oldImage->getName());
             }
         }
+        if ($passwordForm->isSubmitted() && $passwordForm->isValid()) {
 
-        return $this->render('security/dashboard.html.twig', ['form' => $form->createView()]);
+            $user->setPassword(
+                $passwordEncoder->encodePassword(
+                    $user,
+                    $passwordForm->get('password')->getData()
+                )
+            );
+            $entityManager->persist($user);
+            $entityManager->flush();
+        }
+
+        return $this->render(
+            'security/dashboard.html.twig',
+            [
+                'form' => $form->createView(),
+                'passwordForm' => $passwordForm->createView(),
+            ]
+        );
     }
 
     /**

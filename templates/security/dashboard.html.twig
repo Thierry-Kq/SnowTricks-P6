@@ -2,7 +2,6 @@
 {% block body %}
     <p>dashboard</p>
 
-
     {% if app.user and app.user.image is not null %}
         {% set image_source = asset('/uploads/' ~ app.user.image.name) %}
     {% else %}
@@ -17,20 +16,30 @@
             {{ dump(app.user) }}
         </div>
     </div>
-    {{ include('security/_delete_form.html.twig') }}
+    <div class="debug">
+        <h1>DELETE ACCOUNT</h1>
+        {{ include('security/_delete_form.html.twig') }}
+    </div>
 
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
+    <div class="debug">
+        <h1>ADD/CHANGE IMAGE</h1>
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
 
-    {# {% for image in trick.images %} #}
-    {# <div style="border: solid  #0a0a0a"> #}
-    {# <img src="{{ asset('/uploads/' ~ image.name) }}" alt="Image" width="600px"> #}
-    {# <a href="{{ path('tricks_image_delete', {'id': image.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Delete</a> #}
-    {# </div> #}
-    {# {% endfor %} #}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-    {{ form_end(form) }}
-
-
-
+        {# {% for image in trick.images %} #}
+        {# <div style="border: solid  #0a0a0a"> #}
+        {# <img src="{{ asset('/uploads/' ~ image.name) }}" alt="Image" width="600px"> #}
+        {# <a href="{{ path('tricks_image_delete', {'id': image.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Delete</a> #}
+        {# </div> #}
+        {# {% endfor %} #}
+        <button class="btn">{{ button_label|default('Save') }}</button>
+        {{ form_end(form) }}
+    </div>
+    <div class="debug">
+        <h1>CHANGE PASSWORD</h1>
+        {{ form_start(passwordForm) }}
+        {{ form_widget(passwordForm) }}
+        <button class="btn">{{ button_label|default('Save') }}</button>
+        {{ form_end(passwordForm) }}
+    </div>
 {% endblock %}
