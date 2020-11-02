@@ -36,14 +36,15 @@ class RegistrationController extends AbstractController
             );
 
             // TODO : email is working, email for account creation?
-            $email = (new Email())
-                ->from('aze@gmail.com')
-                ->to($user->getEmail())
-                ->subject('Salut Toa')
-                ->text('Texte html?')
-                ->html('<p>Html ! <br> Tavu ?</p>');
-//
-            $mailer->send($email);
+            // ATTENTION ! ERROR SI LE MAIL 'does not comply with addr-spec of RFC 2822.' par exemple eazezae (pas de @.com)
+//            $email = (new Email())
+//                ->from('aze@gmail.com')
+//                ->to($user->getEmail())
+//                ->subject('Salut Toa')
+//                ->text('Texte html?')
+//                ->html('<p>Html ! <br> Tavu ?</p>');
+////
+//            $mailer->send($email);
 
 
             $entityManager = $this->getDoctrine()->getManager();

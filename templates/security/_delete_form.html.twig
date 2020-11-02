@@ -1,4 +1,4 @@
-<form method="post" action="{{ path('app_delete_user', {'id': app.user.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+<form method="post" action="{{ path('app_delete_user', {'id': app.user.id}) }}" onsubmit="return confirm('Voulez vous vraiment supprimer votre compte? Tout vos tricks seront ajoutés au compte \'SnowTricks\', il s\'occupera bien d\'eux');">
     <input type="hidden" name="_method" value="DELETE">
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ app.user.id) }}">
     <button class="btn">Delete</button>

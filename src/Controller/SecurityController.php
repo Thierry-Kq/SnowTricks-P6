@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
@@ -47,7 +48,8 @@ class SecurityController extends AbstractController
     public function dashboard(
         Request $request,
         EntityManagerInterface $entityManager,
-        ImagesService $imagesService
+        ImagesService $imagesService,
+        UserPasswordEncoderInterface $passwordEncoder
     ) {
         if (!$this->getUser()) {
             return $this->redirectToRoute('app_login');
@@ -62,10 +64,15 @@ class SecurityController extends AbstractController
                 $oldImage = $user->getImage() ?: null;
                 $imagesService->addImages($image, $user, $this->getParameter('images_directory'));
             }
-
+            $user->setPassword(
+                $passwordEncoder->encodePassword(
+                    $user,
+                    $form->get('password')->getData()
+                )
+            );
             $entityManager->persist($user);
             $entityManager->flush();
-            if ($oldImage) {
+            if ($image !== null && $oldImage) {
                 $imagesService->deleteImage($oldImage, $this->getParameter('images_directory') . '/' . $oldImage->getName());
             }
         }
@@ -92,7 +99,7 @@ class SecurityController extends AbstractController
 
             $entityManager->remove($user);
             $entityManager->flush();
-            
+
             $session = new Session();
             $session->invalidate();
 
