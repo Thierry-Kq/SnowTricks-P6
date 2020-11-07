@@ -25,11 +25,11 @@
                 Editer le slug : <strong>ATTENTION : le slug est utile au référencement et est nécéssaire pour les liens partagés, changer le slug est à éviter, surtout si il est en ligne depuis longtemps.</strong>
                 <br>
                 <br>
-                <a href="{{ path('edit_slug', {'slug': trick.slug }) }}">Automatique paraport au Titre (sauvegardez le titre avant)</a>
+                <a href="{{ path('edit_slug', {'id': trick.id }) }}">Automatique paraport au Titre (sauvegardez le titre avant)</a>
                 <br>
                 <br>
                 <p>Vous pouvez aussi le choisir vous mêmes, évitez cependant les accents et charactères spéciaux, en séparant les mots par un '-'. <a href="https://www.ya-graphic.com/bonnes-pratiques-pour-creer-des-urls-seo-friendly/">Voir un article sur les slugs et le référencement.</a></p>
-                <form method="post" action="{{ path('edit_slug', {'slug': trick.slug }) }}">
+                <form method="post" action="{{ path('edit_slug', {'id': trick.id }) }}">
                     <input type="text" name="q">
                     <button class="btn">Send</button>
                 </form>

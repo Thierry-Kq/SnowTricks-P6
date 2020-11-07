@@ -16,9 +16,9 @@ class ToolsService
         $slugger = new AsciiSlugger();
 
         if ($params) { // use UnicodeString to remove the 'q=' and then slug the string
-            return $slugger->slug(u($params)->after('q='));
+            return $slugger->slug(u($params)->after('q=')->lower());
         }
 
-        return $slugger->slug($tricks->getTitle());
+        return $slugger->slug(u($tricks->getTitle())->lower());
     }
 }

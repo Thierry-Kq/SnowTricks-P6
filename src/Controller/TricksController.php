@@ -77,7 +77,7 @@ class TricksController extends AbstractController
     }
 
     /**
-     * @Route("/{slug}", name="tricks_show", methods={"GET"})
+     * @Route("/{id}-{slug}", name="tricks_show", methods={"GET"})
      */
     public function show(Tricks $trick): Response
     {
@@ -90,7 +90,7 @@ class TricksController extends AbstractController
     }
 
     /**
-     * @Route("/{slug}/edit", name="tricks_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="tricks_edit", methods={"GET","POST"})
      */
     public function edit(
         Request $request,
@@ -122,7 +122,13 @@ class TricksController extends AbstractController
             $this->getDoctrine()->getManager()->flush();
 
 //            return $this->redirectToRoute('trick', ['id' => $trick->getId()]);
-            return $this->redirectToRoute('tricks_show', ['slug' => $trick->getSlug()]);
+            return $this->redirectToRoute(
+                'tricks_show',
+                [
+                    'id' => $trick->getId(),
+                    'slug' => $trick->getSlug(),
+                ]
+            );
         }
 
         return $this->render(
@@ -178,7 +184,7 @@ class TricksController extends AbstractController
 //    TODO : test if i can edit with url, no button (csrfToken ??)
 
     /**
-     * @Route("/{slug}/edit-slug", name="edit_slug")
+     * @Route("/{id}/edit-slug", name="edit_slug")
      */
     public function editSlug(
         Request $request,
@@ -192,6 +198,12 @@ class TricksController extends AbstractController
         $entityManager->persist($trick);
         $entityManager->flush();
 
-        return $this->redirectToRoute('tricks_show', ['slug' => $slug]);
+        return $this->redirectToRoute(
+            'tricks_show',
+            [
+                'id' => $trick->getId(),
+                'slug' => $trick->getSlug(),
+            ]
+        );
     }
 }

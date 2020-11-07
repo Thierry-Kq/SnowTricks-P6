@@ -25,8 +25,8 @@
                     <td>{{ trick.description }}</td>
                     <td>{{ trick.images|length }}</td>
                     <td>
-                        <a href="{{ path('tricks_show', {'slug': trick.slug}) }}">show</a>
-                        <a href="{{ path('tricks_edit', {'slug': trick.slug}) }}">edit</a>
+                        <a href="{{ path('tricks_show', {'id' : trick.id,'slug' : trick.slug}) }}">show</a>
+                        <a href="{{ path('tricks_edit', {'id': trick.id}) }}">edit</a>
                     </td>
                 </tr>
             {% else %}
@@ -36,7 +36,7 @@
             {% endfor %}
 
             {% for trick in tricks %}
-                <a href="{{ path('tricks_show', {'slug' : trick.slug}) }}">Link to trick {{ trick.id }}</a>
+                <a href="{{ path('tricks_show', {'id' : trick.id,'slug' : trick.slug}) }}">Link to trick {{ trick.id }}</a>
                 {{ dump(trick) }}
             {% endfor %}
             </tbody>
