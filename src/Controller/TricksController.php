@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\TricksType;
 use App\Repository\TricksRepository;
 use App\Service\ImagesService;
+use App\Service\ToolsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -58,6 +59,7 @@ class TricksController extends AbstractController
             foreach ($images as $image) {
                 $imagesService->addImages($image, $trick, $this->getParameter('images_directory'));
             }
+            $entityManager->persist($trick);
             $entityManager->flush();
 
             return $this->redirectToRoute('tricks_index');
@@ -75,7 +77,7 @@ class TricksController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="tricks_show", methods={"GET"})
+     * @Route("/{id}-{slug}", name="tricks_show", methods={"GET"})
      */
     public function show(Tricks $trick): Response
     {
@@ -120,8 +122,13 @@ class TricksController extends AbstractController
             $this->getDoctrine()->getManager()->flush();
 
 //            return $this->redirectToRoute('trick', ['id' => $trick->getId()]);
-
-            return $this->redirectToRoute('tricks_index');
+            return $this->redirectToRoute(
+                'tricks_show',
+                [
+                    'id' => $trick->getId(),
+                    'slug' => $trick->getSlug(),
+                ]
+            );
         }
 
         return $this->render(
@@ -172,5 +179,31 @@ class TricksController extends AbstractController
         }
 
         return new JsonResponse(['error' => 'Token Invalide'], 400);
+    }
+
+//    TODO : test if i can edit with url, no button (csrfToken ??)
+
+    /**
+     * @Route("/{id}/edit-slug", name="edit_slug")
+     */
+    public function editSlug(
+        Request $request,
+        Tricks $trick,
+        EntityManagerInterface $entityManager,
+        ToolsService $tools
+    ) {
+
+        $slug = ($request->getContent() === "") ? $tools->slugify($trick) : $tools->slugify($trick, $request->getContent());
+        $trick->setSlug($slug);
+        $entityManager->persist($trick);
+        $entityManager->flush();
+
+        return $this->redirectToRoute(
+            'tricks_show',
+            [
+                'id' => $trick->getId(),
+                'slug' => $trick->getSlug(),
+            ]
+        );
     }
 }

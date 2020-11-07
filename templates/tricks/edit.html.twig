@@ -5,17 +5,38 @@
 {% block body %}
 
     {# TODO : gerer autrement le app.user null / role_user maybe ? #}
+    {# VOIR LIOR CHAMLA CHAPITRE 9.4 POUR ISGRANTED ET AUTHOR === #}
     {# {% if (app.user == null) or (trick.author.id != app.user.id) or not is_granted('ROLE_ADMIN') %} #}
     {% if not is_granted('ROLE_USER') or (trick.author.id != app.user.id) and not is_granted('ROLE_ADMIN') %}
         {{ include('security/deny.html.twig') }}
     {% else %}
-        <h1>Edit Tricks</h1>
+        <div class="row">
+            <div class="col-8">
 
-        {{ include('tricks/_form.html.twig', {'button_label': 'Update'}) }}
+                <h1>Edit Tricks</h1>
 
-        <a href="{{ path('tricks_index') }}">back to list</a>
+                {{ include('tricks/_form.html.twig', {'button_label': 'Update'}) }}
 
-        {{ include('tricks/_delete_form.html.twig') }}
+                <a href="{{ path('tricks_index') }}">back to list</a>
+
+                {{ include('tricks/_delete_form.html.twig') }}
+            </div>
+            <div class="col-4">
+                Editer le slug : <strong>ATTENTION : le slug est utile au référencement et est nécéssaire pour les liens partagés, changer le slug est à éviter, surtout si il est en ligne depuis longtemps.</strong>
+                <br>
+                <br>
+                <a href="{{ path('edit_slug', {'id': trick.id }) }}">Automatique paraport au Titre (sauvegardez le titre avant)</a>
+                <br>
+                <br>
+                <p>Vous pouvez aussi le choisir vous mêmes, évitez cependant les accents et charactères spéciaux, en séparant les mots par un '-'. <a href="https://www.ya-graphic.com/bonnes-pratiques-pour-creer-des-urls-seo-friendly/">Voir un article sur les slugs et le référencement.</a></p>
+                <form method="post" action="{{ path('edit_slug', {'id': trick.id }) }}">
+                    <input type="text" name="q">
+                    <button class="btn">Send</button>
+                </form>
+
+
+            </div>
+        </div>
     {% endif %}
 {% endblock %}
 
