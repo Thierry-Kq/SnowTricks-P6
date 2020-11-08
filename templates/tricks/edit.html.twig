@@ -5,7 +5,7 @@
 {% block body %}
 
     {# TODO : gerer autrement le app.user null / role_user maybe ? #}
-    {# VOIR LIOR CHAMLA CHAPITRE 9.4 POUR ISGRANTED ET AUTHOR === #}
+    {# * VOIR LIOR CHAMLA CHAPITRE 9.4 POUR ISGRANTED ET AUTHOR === #}
     {# {% if (app.user == null) or (trick.author.id != app.user.id) or not is_granted('ROLE_ADMIN') %} #}
     {% if not is_granted('ROLE_USER') or (trick.author.id != app.user.id) and not is_granted('ROLE_ADMIN') %}
         {{ include('security/deny.html.twig') }}

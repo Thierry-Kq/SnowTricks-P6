@@ -10,6 +10,7 @@ use App\Form\TricksType;
 use App\Repository\TricksRepository;
 use App\Service\ImagesService;
 use App\Service\ToolsService;
+use App\Service\VideosService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -42,7 +43,7 @@ class TricksController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         ImagesService $imagesService,
-        ToolsService $tools
+        VideosService $videosService
     ) {
         $user = $this->getUser();
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -61,11 +62,11 @@ class TricksController extends AbstractController
             foreach ($images as $image) {
                 $imagesService->addImages($image, $trick, $this->getParameter('images_directory'));
             }
+
             $videos = $form->get('videos')->getData();
-
-            // todo : inject entitymanager in video service
-            $tools->addVideoTick($entityManager, $trick, $videos);
-
+            foreach (array_filter($videos) as $video) {
+                $videosService->addVideoTick($trick, array_filter($video));
+            }
             $entityManager->persist($trick);
             $entityManager->flush();
 
@@ -102,16 +103,14 @@ class TricksController extends AbstractController
         Tricks $trick,
         EntityManagerInterface $entityManager,
         ImagesService $imagesService,
+        VideosService $videosService,
         ToolsService $tools
     ): Response {
-
 
         $form = $this->createForm(TricksType::class, $trick);
         $form->handleRequest($request);
 
-
-        $user = $this->getUser();
-
+//        $user = $this->getUser();
         // if not logged = bug
         // deny access if not author or admin
 //        if ($user->getId() != $trick->getAuthor()->getId()) {
@@ -127,9 +126,9 @@ class TricksController extends AbstractController
             }
 
             $videos = $form->get('videos')->getData();
-
-            // todo : inject entitymanager in video service
-            $tools->addVideoTick($entityManager, $trick, $videos);
+            foreach (array_filter($videos) as $video) {
+                $videosService->addVideoTick($trick, $video);
+            }
             $entityManager->flush();
 
 //            return $this->redirectToRoute('trick', ['id' => $trick->getId()]);

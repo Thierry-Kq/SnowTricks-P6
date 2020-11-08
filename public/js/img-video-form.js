@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    //  * jquery to add / remove a field for a videoTrick --------------------
+    //  * jquery to add / remove a field for a videoTrick
     // var max_fields = 10; //maximum input boxes allowed
     var wrapper = $(".input_fields_wrap"), //Fields wrapper
         add_button = $(".add_field_button"), //Add button ID
@@ -19,7 +19,7 @@ $(document).ready(function () {
         // count--;
     })
 
-    // * jquery/ajax to delete image/videoTrick in db and remove field --------------------
+    // * jquery/ajax to delete image/videoTrick in db and remove field
     var $a = $("a[data-delete]");
 
     $a.click(function (e) {
