@@ -47,9 +47,15 @@ class Tricks
      */
     private $slug;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Video::class, inversedBy="tricks", cascade={"persist"})
+     */
+    private $video;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
+        $this->video = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -145,6 +151,32 @@ class Tricks
         if ($this->slug === null) {
             $this->slug = $tools->slugify($this);
         }
+    }
+
+    /**
+     * @return Collection|Video[]
+     */
+    public function getVideo(): Collection
+    {
+        return $this->video;
+    }
+
+    public function addVideo(Video $video): self
+    {
+        if (!$this->video->contains($video)) {
+            $this->video[] = $video;
+        }
+
+        return $this;
+    }
+
+    public function removeVideo(Video $video): self
+    {
+        if ($this->video->contains($video)) {
+            $this->video->removeElement($video);
+        }
+
+        return $this;
     }
 
 }

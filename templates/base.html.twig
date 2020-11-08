@@ -19,6 +19,12 @@
 </head>
 <body>
 
+{% if is_granted('ROLE_ADMIN') %}
+    <h1>ROLE ADMIN</h1>
+{% endif %}
+{% if is_granted('ROLE_USER') %}
+    <h1>ROLE USER</h1>
+{% endif %}
 {# remove this div and end div #}
 <div class="container">
 
@@ -33,12 +39,6 @@
     <a class="mr-3" href="{{ path('app_register') }}">app_register</a>
 
 
-    {% if is_granted('ROLE_ADMIN') %}
-        <h1>ROLE ADMIN</h1>
-    {% endif %}
-    {% if is_granted('ROLE_USER') %}
-        <h1>ROLE USER</h1>
-    {% endif %}
     {% block body %}{% endblock %}
 </div>
 {% block javascripts %}{% endblock %}

@@ -19,7 +19,6 @@
 
                 <a href="{{ path('tricks_index') }}">back to list</a>
 
-                {{ include('tricks/_delete_form.html.twig') }}
             </div>
             <div class="col-4">
                 Editer le slug : <strong>ATTENTION : le slug est utile au référencement et est nécéssaire pour les liens partagés, changer le slug est à éviter, surtout si il est en ligne depuis longtemps.</strong>
@@ -33,14 +32,19 @@
                     <input type="text" name="q">
                     <button class="btn">Send</button>
                 </form>
-
-
             </div>
         </div>
+
+
+        <div class="col-4">
+            {{ include('tricks/_delete_form.html.twig') }}
+
+        </div>
+
+
     {% endif %}
 {% endblock %}
 
 {% block javascripts %}
-
-    <script src="{{ asset('js/images.js') }}"></script>
+    <script src="{{ asset('js/img-video-form.js') }}"></script>
 {% endblock %}

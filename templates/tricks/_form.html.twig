@@ -11,6 +11,30 @@
             <a href="{{ path('tricks_image_delete', {'id': image.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Delete</a>
         </div>
     {% endfor %}
+
+    <h2>Videos</h2>
+    {% for video in trick.video %}
+        {% if video.type == 'youtube' %}
+            {% set url = 'https://www.youtube.com/watch?v=' ~ video.name %}
+        {% elseif video.type == 'dailymotion' %}
+            {% set url = 'https://www.dailymotion.com/video/' ~ video.name %}
+        {% else %}
+            {% set url = '' %}
+        {% endif %}
+        <div style="border: solid  #0a0a0a">
+            <p>Titre : {{ video.title }} - Type : {{ video.type }} - Lien : <a href="{{ url }}" target="_blank">{{ url }}</a> <a href="{{ path('tricks_video_delete', {'id': video.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ video.id) }}">Supprimer la video</a>
+            </p>
+            {# <img src="{{ asset('/uploads/' ~ image.name) }}" alt="Image" width="600px"> #}
+            {# <a href="{{ path('tricks_image_delete', {'id': image.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Delete</a> #}
+        </div>
+    {% endfor %}
+
 {% endif %}
+
+<div class="input_fields_wrap"> {# input_fields_wrap/add_field_button for jquery #}
+    <button class="add_field_button">Add More Fields</button>
+    <div><input type="text" id="form_videos_0" name="tricks[videos][0]"/></div>
+</div>
 <button class="btn">{{ button_label|default('Save') }}</button>
 {{ form_end(form) }}
+
