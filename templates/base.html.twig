@@ -19,6 +19,13 @@
 </head>
 <body>
 
+
+{% if is_granted('ROLE_ADMIN') %}
+    <h1>ROLE ADMIN</h1>
+{% endif %}
+{% if is_granted('ROLE_USER') %}
+    <h1>ROLE USER</h1>
+{% endif %}
 {# remove this div and end div #}
 <div class="container">
 
@@ -31,14 +38,20 @@
     <a class="mr-3" href="{{ path('tricks_new') }}">tricks_new</a>
     <a class="mr-3" href="{{ path('app_dashboard') }}">app_dashboard</a>
     <a class="mr-3" href="{{ path('app_register') }}">app_register</a>
+    {% for message in app.flashes('notice') %}
+        <div class="alert alert-primary flash-notice" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+    {# TODO : gerer les message, voir le multi type dans l'exemple suivant + ( $this->addFlash ) #}
+    {# {% for label, messages in app.flashes(['success', 'warning']) %} #}
+    {# {% for message in messages %} #}
+    {# <div class="flash-{{ label }}"> #}
+    {# {{ message }} #}
+    {# </div> #}
+    {# {% endfor %} #}
+    {# {% endfor %} #}
 
-
-    {% if is_granted('ROLE_ADMIN') %}
-        <h1>ROLE ADMIN</h1>
-    {% endif %}
-    {% if is_granted('ROLE_USER') %}
-        <h1>ROLE USER</h1>
-    {% endif %}
     {% block body %}{% endblock %}
 </div>
 {% block javascripts %}{% endblock %}
