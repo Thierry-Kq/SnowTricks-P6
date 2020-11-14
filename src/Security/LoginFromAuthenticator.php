@@ -69,9 +69,13 @@ class LoginFromAuthenticator extends AbstractFormLoginAuthenticator implements P
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials['username']]);
 
+        // * if no user found, fail authentication with a custom error
         if (!$user) {
-            // fail authentication with a custom error
             throw new CustomUserMessageAuthenticationException('Username could not be found.');
+        }
+        // * if user still have an activationToken, fail authentication with a custom error
+        if ($user->getActivationToken()) {
+            throw new CustomUserMessageAuthenticationException('Cet utilisateur n\'a pas validé son compte');
         }
 
         return $user;

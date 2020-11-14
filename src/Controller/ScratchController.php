@@ -20,8 +20,6 @@ class ScratchController extends AbstractController
      */
     public function index()
     {
-
-
         return $this->render('homepage.html.twig');
     }
 
