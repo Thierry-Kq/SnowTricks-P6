@@ -214,7 +214,7 @@ class TricksController extends AbstractController
 
 
 //    TODO : test if i can edit with url, no button (csrfToken ??)
-
+// TODO : recup user courant et verif si il est owner du trick
     /**
      * @Route("/{id}/edit-slug", name="edit_slug")
      */

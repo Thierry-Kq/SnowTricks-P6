@@ -28,8 +28,14 @@ class ScratchController extends AbstractController
      */
     public function scratch(MailerInterface $mailer)
     {
-
-
         return $this->render('scratch/index.html.twig');
+    }
+
+    /**
+     * @Route("/conditions-d-utilisation", name="conditions")
+     */
+    public function condition()
+    {
+        return $this->render('scratch/conditions.html.twig');
     }
 }

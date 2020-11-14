@@ -20,6 +20,7 @@ class UserType extends AbstractType
                 'images', // pas lié a la bdd
                 FileType::class,
                 [
+                    'attr' => ['class' => 'file-input'],
                     'label' => false,
                     'multiple' => false,
                     'mapped' => false,
