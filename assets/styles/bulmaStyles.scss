@@ -13,14 +13,15 @@ $brown: #757763;
 $beige-light: #D0D1CD;
 $beige-lighter: #EFF0EB;
 $hero: #7CFAF0;
-
+$blue: #5A93D0;
+$blueSecondary: #4A6888;
 
 // Update Bulma's global variables
 //$family-sans-serif: "Tangerine", sans-serif;
 $grey-dark: $brown;
 $grey-light: $beige-light;
-$primary: $hero;
-$link: $pink;
+$primary: $blue;
+$link: $blueSecondary;
 $widescreen-enabled: false;
 $fullhd-enabled: false;
 
@@ -39,6 +40,7 @@ $input-shadow: none;
 @import "~bulma/sass/elements/image.sass";
 @import "~bulma/sass/elements/table.sass";
 @import "~bulma/sass/elements/title.sass";
+@import "~bulma/sass/elements/icon.sass";
 @import "~bulma/sass/form/_all.sass";
 @import "~bulma/sass/components/card.sass";
 @import "~bulma/sass/components/modal.sass";

@@ -90,11 +90,9 @@
                     <td>{{ trick.description|u.truncate(15, '...') }}</td>
                     <td>/{{ trick.slug }}</td>
                     <td>{{ trick.images|length }}</td>
-                    {# TODO :
                     <td>{{ trick.video|length }}</td>
-                    <td>{{ trick.comments|length }}</td>
-                    #}
-                    <td>47</td>
+                    {# <td>{{ trick.comments|length }}</td> #}
+                    {# <td>47</td> #}
                     <td>14</td>
                     <td><a href="{{ path('tricks_show', {'id' : trick.id,'slug' : trick.slug}) }}">voir</a></td>
                     {# <td><a href="{{ path('tricks_edit', {'id': trick.id}) }}">editer</a></td> #}
