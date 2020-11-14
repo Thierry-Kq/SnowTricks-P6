@@ -5,10 +5,12 @@ namespace App\Controller;
 use App\Entity\Images;
 use App\Entity\Tricks;
 use App\Entity\User;
+use App\Entity\Video;
 use App\Form\TricksType;
 use App\Repository\TricksRepository;
 use App\Service\ImagesService;
 use App\Service\ToolsService;
+use App\Service\VideosService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -40,7 +42,8 @@ class TricksController extends AbstractController
     public function new(
         Request $request,
         EntityManagerInterface $entityManager,
-        ImagesService $imagesService
+        ImagesService $imagesService,
+        VideosService $videosService
     ) {
         $user = $this->getUser();
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -59,12 +62,15 @@ class TricksController extends AbstractController
             foreach ($images as $image) {
                 $imagesService->addImages($image, $trick, $this->getParameter('images_directory'));
             }
+
+            $videos = $form->get('videos')->getData();
+            foreach (array_filter($videos) as $video) {
+                $videosService->addVideoTick($trick, array_filter($video));
+            }
             $entityManager->persist($trick);
             $entityManager->flush();
 
             return $this->redirectToRoute('tricks_index');
-//            return $this->redirectToRoute('trick', ['id' => $trick->getId()]);
-
         }
 
         return $this->render(
@@ -95,16 +101,16 @@ class TricksController extends AbstractController
     public function edit(
         Request $request,
         Tricks $trick,
-        ImagesService $imagesService
+        EntityManagerInterface $entityManager,
+        ImagesService $imagesService,
+        VideosService $videosService,
+        ToolsService $tools
     ): Response {
-
 
         $form = $this->createForm(TricksType::class, $trick);
         $form->handleRequest($request);
 
-
-        $user = $this->getUser();
-
+//        $user = $this->getUser();
         // if not logged = bug
         // deny access if not author or admin
 //        if ($user->getId() != $trick->getAuthor()->getId()) {
@@ -119,7 +125,11 @@ class TricksController extends AbstractController
                 $imagesService->addImages($image, $trick, $this->getParameter('images_directory'));
             }
 
-            $this->getDoctrine()->getManager()->flush();
+            $videos = $form->get('videos')->getData();
+            foreach (array_filter($videos) as $video) {
+                $videosService->addVideoTick($trick, $video);
+            }
+            $entityManager->flush();
 
 //            return $this->redirectToRoute('trick', ['id' => $trick->getId()]);
             return $this->redirectToRoute(
@@ -180,6 +190,28 @@ class TricksController extends AbstractController
 
         return new JsonResponse(['error' => 'Token Invalide'], 400);
     }
+
+    /**
+     * @Route("/delete/video/{id}", name="tricks_video_delete", methods={"DELETE"})
+     */
+    public function deleteVideo(
+        Video $video,
+        Request $request,
+        EntityManagerInterface $entityManager
+    ) {
+        $data = json_decode($request->getContent(), true);
+
+        if ($this->isCsrfTokenValid('delete' . $video->getId(), $data['_token'])) {
+            $entityManager->remove($video);
+            $entityManager->flush();
+
+            // on repond en json
+            return new JsonResponse(['success' => 1]);
+        }
+
+        return new JsonResponse(['error' => 'Token Invalide'], 400);
+    }
+
 
 //    TODO : test if i can edit with url, no button (csrfToken ??)
 

@@ -5,7 +5,6 @@ namespace App\Service;
 
 
 use App\Entity\Tricks;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use function Symfony\Component\String\u;
 
