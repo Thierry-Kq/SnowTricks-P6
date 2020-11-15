@@ -3,10 +3,10 @@
 namespace App\Form;
 
 use App\Entity\Tricks;
-use Doctrine\DBAL\Types\StringType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -16,12 +16,13 @@ class TricksType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title')
-            ->add('description')
+            ->add('title', TextType::class, ['attr' => ['class' => 'input is-primary', 'placeholder' => 'Alex Smith']])
+            ->add('description', TextareaType::class, ['attr' => ['class' => 'input is-primary', 'placeholder' => 'Alex Smith']])
             ->add(
                 'images', // pas lié a la bdd
                 FileType::class,
                 [
+                    'attr' => ['class' => 'input file-input'],
                     'label' => false,
                     'multiple' => true,
                     'mapped' => false,

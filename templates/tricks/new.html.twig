@@ -3,11 +3,15 @@
 {% block title %}New Tricks{% endblock %}
 
 {% block body %}
-    <h1>Create new Tricks</h1>
+    {% set hero_title = "Création d'un Trick" %}
+    {% set hero_subtitle = "" %}
+    {{ include('component/_hero_title.html.twig') }}
 
-    {{ include('tricks/_form.html.twig') }}
+    <div class="container mt-6">
 
-    <a href="{{ path('tricks_index') }}">back to list</a>
+        {{ include('tricks/_form.html.twig') }}
+
+    </div>
 {% endblock %}
 
 {% block javascripts %}

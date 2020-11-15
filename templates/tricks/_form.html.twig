@@ -1,40 +1,41 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-
-    {# if edit : display image #}
-
-{% if app.request.attributes.get('_route') == 'tricks_edit' %}
-    <h2>Images</h2>
-    {% for image in trick.images %}
-        <div style="border: solid  #0a0a0a">
-            <img src="{{ asset('/uploads/' ~ image.name) }}" alt="Image" width="600px">
-            <a href="{{ path('tricks_image_delete', {'id': image.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Delete</a>
-        </div>
-    {% endfor %}
-
-    <h2>Videos</h2>
-    {% for video in trick.video %}
-        {% if video.type == 'youtube' %}
-            {% set url = 'https://www.youtube.com/watch?v=' ~ video.name %}
-        {% elseif video.type == 'dailymotion' %}
-            {% set url = 'https://www.dailymotion.com/video/' ~ video.name %}
-        {% else %}
-            {% set url = '' %}
-        {% endif %}
-        <div style="border: solid  #0a0a0a">
-            <p>Titre : {{ video.title }} - Type : {{ video.type }} - Lien : <a href="{{ url }}" target="_blank">{{ url }}</a> <a href="{{ path('tricks_video_delete', {'id': video.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ video.id) }}">Supprimer la video</a>
-            </p>
-            {# <img src="{{ asset('/uploads/' ~ image.name) }}" alt="Image" width="600px"> #}
-            {# <a href="{{ path('tricks_image_delete', {'id': image.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Delete</a> #}
-        </div>
-    {% endfor %}
-
-{% endif %}
-
-<div class="input_fields_wrap"> {# input_fields_wrap/add_field_button for jquery #}
-    <button class="add_field_button">Add More Fields</button>
-    <div><input type="text" id="form_videos_0" name="tricks[videos][0]"/></div>
+<div class="field">
+    <label class="label">Titre</label>
+    <div class="control">
+        {{ form_widget(form.title) }}
+    </div>
 </div>
-<button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
 
+<div class="field">
+    <label class="label">Description</label>
+    <div class="control">
+        {{ form_widget(form.description) }}
+    </div>
+</div>
+<label class="label">Images</label>
+<div class="file">
+
+    <label class="file-label">
+        {{ form_widget(form.images) }}
+        {# <input class="file-input" type="file" name="resume"> #}
+        <span class="file-cta">
+      <span class="file-icon">
+        <i class="fas fa-upload"></i>
+      </span>
+      <span class="file-label">
+        Choisissez une ou plusieures images
+      </span>
+    </span>
+    </label>
+</div>
+<label class="label mt-3">Vidéos</label>
+
+{# ['class' => 'input is-primary', 'placeholder' => 'Alex Smith']] #}
+<div class="input_fields_wrap control"> {# input_fields_wrap/add_field_button for jquery #}
+    <div>
+        <input class="input is-primary" type="text" id="form_videos_0" name="tricks[videos][0]"/>
+    </div>
+    <button class="add_field_button button is-primary mt-3 mb-3" type="submit">Ajouter plus de vidéos</button>
+</div>
+<button class="button is-primary mt-3">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}
