@@ -22,8 +22,8 @@ class ChangePasswordType extends AbstractType
                 RepeatedType::class,
                 [
                     'type' => PasswordType::class,
-                    'first_options' => ['label' => 'Password'],
-                    'second_options' => ['label' => 'Repeat Password'],
+                    'first_options' => ['label' => 'Password', 'attr' => ['class' => 'input is-primary'], 'label_attr' => ['class' => 'label']],
+                    'second_options' => ['label' => 'Repeat Password', 'attr' => ['class' => 'input is-primary'], 'label_attr' => ['class' => 'label mt-2']],
                     'mapped' => false,
 
                     'constraints' => [

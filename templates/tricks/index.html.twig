@@ -3,46 +3,61 @@
 {% block title %}Tricks index{% endblock %}
 
 {% block body %}
-    <div class="container">
 
-        <h1>Tricks index</h1>
 
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Nbr images</th>
-                <th>actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for trick in tricks %}
-                <tr>
-                    <td>{{ trick.id }}</td>
-                    <td>{{ trick.title }}</td>
-                    <td>{{ trick.description }}</td>
-                    <td>{{ trick.images|length }}</td>
-                    <td>
-                        <a href="{{ path('tricks_show', {'id' : trick.id,'slug' : trick.slug}) }}">show</a>
-                        <a href="{{ path('tricks_edit', {'id': trick.id}) }}">edit</a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="4">no records found</td>
-                </tr>
-            {% endfor %}
+    {% set hero_title = "Dashboard" %}
+    {% set hero_subtitle = "" %}
+    {{ include('component/_hero_homepage.html.twig') }}
 
-            {% for trick in tricks %}
-                <a href="{{ path('tricks_show', {'id' : trick.id,'slug' : trick.slug}) }}">Link to trick {{ trick.id }}</a>
-                {{ dump(trick) }}
-            {% endfor %}
-            </tbody>
-        </table>
+    <div class="columns is-desktop mt-6 ml-6 mr-6 is-multiline" id="top_tricks">
+        {% for trick in tricks %}
+            <div class="column is-one-quarter">
+                {% set img_source = trick.images[0] is defined ? asset('/uploads/' ~ trick.images[0].name) : asset('/img/home-bg2.jpg') %}
 
-        <a href="{{ path('tricks_new') }}">Create new</a>
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image is-fullwidth ">
+                            <img src="{{ img_source }}" alt="Placeholder image">
+                        </figure>
+                    </div>
+                    <div class="card-content">
+                        <div class="media">
+
+                            <div class="media-content">
+                                <p class="title is-4"><a href="{{ path('tricks_show', {'id' : trick.id,'slug' : trick.slug}) }}">{{ trick.title }}</a>
+                                </p>
+                                <p class="subtitle is-6">par {{ trick.author.username }}</p>
+                                {% if trick.images[0] is defined %}
+                                    {% set image_badge = trick.images|length > 1 ? trick.images|length ~ ' images' : trick.images|length ~ ' image' %}
+                                    <span class="mr-3 tag is-info">{{ image_badge }}</span>
+                                {% endif %}
+                                {% if trick.video[0] is defined %}
+                                    {% set video_badge = trick.video|length > 1 ? trick.video|length ~ ' vidéos' : trick.video|length ~ ' vidéo' %}
+                                    <span class="mr-3 tag is-primary">{{ video_badge }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="content">
+                            <p class="block">
+                                {{ trick.description|u.truncate(50, '...') }}
+                            </p>
+
+                            <p class="block">
+                                {# TODO : created ou updated pour les tricks #}
+                                <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+                            </p>
+
+                            <p class="block">
+                                {# todo : only if author || admin + link to delete #}
+                                <a href="{{ path('tricks_edit', {'id': trick.id}) }}"><i class="fas fa-edit is-primary"></i></a>
+                                <i class="fas fa-trash-alt"></i>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
-
+    {{ knp_pagination_render(tricks) }}
 {% endblock %}

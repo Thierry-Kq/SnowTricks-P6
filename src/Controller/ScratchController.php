@@ -16,20 +16,10 @@ use Symfony\Component\Routing\Annotation\Route;
 class ScratchController extends AbstractController
 {
     /**
-     * @Route("/", name="homepage")
+     * @Route("/conditions-d-utilisation", name="conditions")
      */
-    public function index()
+    public function condition()
     {
-        return $this->render('homepage.html.twig');
-    }
-
-    /**
-     * @Route("/scratch", name="scratch")
-     */
-    public function scratch(MailerInterface $mailer)
-    {
-
-
-        return $this->render('scratch/index.html.twig');
+        return $this->render('scratch/conditions.html.twig');
     }
 }

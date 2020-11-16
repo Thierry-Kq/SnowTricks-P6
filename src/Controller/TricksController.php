@@ -12,32 +12,46 @@ use App\Service\ImagesService;
 use App\Service\ToolsService;
 use App\Service\VideosService;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/tricks")
- */
+
 class TricksController extends AbstractController
 {
     /**
      * @Route("/", name="tricks_index", methods={"GET"})
      */
-    public function index(TricksRepository $tricksRepository): Response
-    {
+    public function index(
+        TricksRepository $tricksRepository,
+        PaginatorInterface $paginator,
+        Request $request
+    ): Response {
+
+        // paginator test
+        $data = $tricksRepository->findAll();
+        $tricks = $paginator->paginate(
+            $data, // Requête contenant les données à paginer (ici nos articles)
+            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
+            8
+        );
+
+        // we set a custom template for the pagination_render
+        $tricks->setTemplate('component/_pagination.html.twig');
+
         return $this->render(
             'tricks/index.html.twig',
             [
-                'tricks' => $tricksRepository->findAll(),
+                'tricks' => $tricks,
             ]
         );
     }
 
     /**
-     * @Route("/new", name="tricks_new", methods={"GET","POST"})
+     * @Route("/tricks/new", name="tricks_new", methods={"GET","POST"})
      */
     public function new(
         Request $request,
@@ -83,7 +97,7 @@ class TricksController extends AbstractController
     }
 
     /**
-     * @Route("/{id}-{slug}", name="tricks_show", methods={"GET"})
+     * @Route("/tricks/{id}-{slug}", name="tricks_show", methods={"GET"})
      */
     public function show(Tricks $trick): Response
     {
@@ -96,7 +110,7 @@ class TricksController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit", name="tricks_edit", methods={"GET","POST"})
+     * @Route("/tricks/{id}/edit", name="tricks_edit", methods={"GET","POST"})
      */
     public function edit(
         Request $request,
@@ -151,7 +165,7 @@ class TricksController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="tricks_delete", methods={"DELETE"})
+     * @Route("/tricks/{id}", name="tricks_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Tricks $trick): Response
     {
@@ -172,7 +186,7 @@ class TricksController extends AbstractController
     }
 
     /**
-     * @Route("/delete/image/{id}", name="tricks_image_delete", methods={"DELETE"})
+     * @Route("/tricks/delete/image/{id}", name="tricks_image_delete", methods={"DELETE"})
      */
     public function deleteImage(
         Images $image,
@@ -192,7 +206,7 @@ class TricksController extends AbstractController
     }
 
     /**
-     * @Route("/delete/video/{id}", name="tricks_video_delete", methods={"DELETE"})
+     * @Route("/tricks/delete/video/{id}", name="tricks_video_delete", methods={"DELETE"})
      */
     public function deleteVideo(
         Video $video,
@@ -214,9 +228,9 @@ class TricksController extends AbstractController
 
 
 //    TODO : test if i can edit with url, no button (csrfToken ??)
-
+// TODO : recup user courant et verif si il est owner du trick
     /**
-     * @Route("/{id}/edit-slug", name="edit_slug")
+     * @Route("/tricks/{id}/edit-slug", name="edit_slug")
      */
     public function editSlug(
         Request $request,

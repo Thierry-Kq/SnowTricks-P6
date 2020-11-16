@@ -3,51 +3,71 @@
 {% block title %}Tricks{% endblock %}
 
 {% block body %}
-    {{ dump(trick) }}
-    <div class="debug">
-        {% if app.user and app.user.id == trick.author.id %}
-            <h1 class="debug-title">PROPRIO</h1>
-            <p>proprietaire de cet article, tu peux edit</p>
-            <a href="{{ path('tricks_edit', {'id' : trick.id}) }}">edit the trick {{ trick.id }}</a>
-        {% elseif is_granted('ROLE_ADMIN') %}
-            <p>cet article nest pas a toi mais t'es admin donc ok</p>
-            <a href="{{ path('tricks_edit', {'id' : trick.id}) }}">edit the trick {{ trick.id }}</a>
-        {% else %}
-            <h1 class="debug-title">PROPRIO</h1>
-            <p>cet article nest pas a toi tu peux pas edit</p>
-        {% endif %}
+
+    {% set hero_title = trick.title %}
+    {% set hero_subtitle = "" %}
+    {{ include('component/_hero_trick_show.html.twig') }}
+
+    <section class="hero is-primary is-medium">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">
+                    Barre video/images (caroussel?)
+                </h1>
+            </div>
+        </div>
+    </section>
+    <div class="container mt-6">
+        <p>{{ trick.description }}</p>
     </div>
+    {# {{ dump(trick) }} #}
 
-    <h1>Tricks</h1>
 
-    <table class="table">
-        <tbody>
-        <tr>
-            <th>Id</th>
-            <td>{{ trick.id }}</td>
-        </tr>
-        <tr>
-            <th>Title</th>
-            <td>{{ trick.title }}</td>
-        </tr>
-        <tr>
-            <th>Description</th>
-            <td>{{ trick.description }}</td>
-        </tr>
-        <tr>
-            <th>Nbr Images</th>
-            <td>{{ trick.images|length }}</td>
-        </tr>
-        <tr>
-            <th>Nbr Videos</th>
-            <td>{{ trick.video|length }}</td>
-        </tr>
-        </tbody>
-    </table>
 
-    <a href="{{ path('tricks_index') }}">back to list</a>
+    {# <div class="debug"> #}
+    {# {% if app.user and app.user.id == trick.author.id %} #}
+    {# <h1 class="debug-title">PROPRIO</h1> #}
+    {# <p>proprietaire de cet article, tu peux edit</p> #}
+    {# <a href="{{ path('tricks_edit', {'id' : trick.id}) }}">edit the trick {{ trick.id }}</a> #}
+    {# {% elseif is_granted('ROLE_ADMIN') %} #}
+    {# <p>cet article nest pas a toi mais t'es admin donc ok</p> #}
+    {# <a href="{{ path('tricks_edit', {'id' : trick.id}) }}">edit the trick {{ trick.id }}</a> #}
+    {# {% else %} #}
+    {# <h1 class="debug-title">PROPRIO</h1> #}
+    {# <p>cet article nest pas a toi tu peux pas edit</p> #}
+    {# {% endif %} #}
+    {# </div> #}
 
-    <a href="{{ path('tricks_edit', {'id': trick.id}) }}">edit</a>
+    {# <h1>Tricks</h1> #}
 
-    {{ include('tricks/_delete_form.html.twig') }}
+    {# <table class="table"> #}
+    {# <tbody> #}
+    {# <tr> #}
+    {# <th>Id</th> #}
+    {# <td>{{ trick.id }}</td> #}
+    {# </tr> #}
+    {# <tr> #}
+    {# <th>Title</th> #}
+    {# <td>{{ trick.title }}</td> #}
+    {# </tr> #}
+    {# <tr> #}
+    {# <th>Description</th> #}
+    {# <td>{{ trick.description }}</td> #}
+    {# </tr> #}
+    {# <tr> #}
+    {# <th>Nbr Images</th> #}
+    {# <td>{{ trick.images|length }}</td> #}
+    {# </tr> #}
+    {# <tr> #}
+    {# <th>Nbr Videos</th> #}
+    {# <td>{{ trick.video|length }}</td> #}
+    {# </tr> #}
+    {# </tbody> #}
+    {# </table> #}
+
+    {# <a href="{{ path('tricks_index') }}">back to list</a> #}
+
+    {# <a href="{{ path('tricks_edit', {'id': trick.id}) }}">edit</a> #}
+
+    {# {{ include('tricks/_delete_form.html.twig') }} #}
 {% endblock %}

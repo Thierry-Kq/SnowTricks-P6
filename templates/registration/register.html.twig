@@ -3,19 +3,56 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    {% for flashError in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flashError }}</div>
-    {% endfor %}
 
-    <h1>Register</h1>
+    {% set hero_title = "Inscription" %}
+    {% set hero_subtitle = "SubTitle" %}
+    {{ include('component/_hero_title.html.twig') }}
 
-    {{ form_start(registrationForm) }}
-    {{ form_row(registrationForm.username) }}
-    {{ form_row(registrationForm.plainPassword, {
-        label: 'Password'
-    }) }}
-    {{ form_row(registrationForm.agreeTerms) }}
+    <div class="container">
+        <div class="box mt-5">
+            <article class="media">
+                {{ form_start(registrationForm) }}
+                {% if app.user %}
+                    <div class="mb-3">
+                        You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+                    </div>
+                {% endif %}
+                {# TODO : gerer erreur du form #}
+                {# {% for flashError in app.flashes('verify_email_error') %} #}
+                {# <div class="alert alert-danger" role="alert">{{ flashError }}</div> #}
+                {# {% endfor %} #}
+                <div class="field">
+                    <label class="label">Username</label>
+                    <div class="control">
+                        {{ form_widget(registrationForm.username) }}
+                    </div>
+                </div>
 
-    <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+                <div class="field">
+                    <label class="label">Email</label>
+                    <div class="control">
+                        {{ form_widget(registrationForm.email) }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="control">
+                        {{ form_widget(registrationForm.plainPassword) }}
+                    </div>
+                </div>
+                <label class="checkbox">
+                    {{ form_widget(registrationForm.agreeTerms) }} Accepter les <a target="_blank" href="{{ path('conditions') }}">conditions d'utilisation</a>
+                </label><br>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <button class="button is-primary is-right mt-3" type="submit">
+                    Inscription
+                </button>
+                {{ form_end(registrationForm) }}
+            </article>
+        </div>
+    </div>
+
+
+
+
 {% endblock %}

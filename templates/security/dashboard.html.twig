@@ -1,45 +1,147 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-    <p>dashboard</p>
+    {% set hero_title = "Dashboard" %}
+    {% set hero_subtitle = "Bienvenue sur ton dashboard " ~ app.user.username %}
+    {{ include('component/_hero_title.html.twig') }}
+    <div class="container">
 
-    {% if app.user and app.user.image is not null %}
-        {% set image_source = asset('/uploads/' ~ app.user.image.name) %}
-    {% else %}
-        {% set image_source = asset('/img/unknow.jpg') %}
-    {% endif %}
+        <div class="box mt-5">
+            <article class="media">
 
-    <div class="row">
-        <div class="col-4">
-            <img src="{{ image_source }}" alt="Image" style="width:100px; height:100px; border-radius: 50%;">
+                <div class="columns">
+                    <div class="column is-one-quarter">
+                        <figure class="image">
+                            {% if app.user and app.user.image is not null %}
+                                {% set image_source = asset('/uploads/' ~ app.user.image.name) %}
+                            {% else %}
+                                {% set image_source = asset('/img/unknow.jpg') %}
+                            {% endif %}
+                            <img class="" src="{{ image_source }}" alt="Image">
+                        </figure>
+                    </div>
+
+
+                    <div class="column is-half">
+                        {{ form_start(form) }}
+                        <div class="field">
+                            <label class="label">Changez votre image de profil</label>
+                        </div>
+                        <div class="field">
+                            <div class="file">
+                                <label class="file-label">
+                                    {{ form_widget(form) }}
+                                    <span class="file-cta">
+                                  <span class="file-icon">
+                                    <i class="fas fa-upload"></i>
+                                  </span>
+                                  <span class="file-label">
+                                    Choisissez une image ( 2mo max)
+                                  </span>
+                                </span>
+                                </label>
+                            </div>
+                        </div>
+                        <button class="button is-primary">Enregistrer</button>
+                    </div>
+                    {{ form_end(form) }}
+                    <div class="column is-one-quarter">
+                        <div class="field">
+                            <label class="label">Modification du compte</label>
+                        </div>
+                        <div class="buttons">
+                            <button class="button is-primary" id="password-modal">Changez votre password</button>
+                            {{ include('security/_delete_form.html.twig') }}
+                        </div>
+                    </div>
+                </div>
+            </article>
         </div>
-        <div class="col-8">
-            {{ dump(app.user) }}
+
+
+        <table class="table is-striped is-hoverable is-fullwidth">
+            <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Slug</th>
+                <th>Images</th>
+                <th>Videos</th>
+                <th>Commentaires</th>
+                <th>Voir</th>
+            </tr>
+            </thead>
+            <tfoot>
+            <tr>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Slug</th>
+                <th>Images</th>
+                <th>Videos</th>
+                <th>Commentaires</th>
+                <th>Voir</th>
+            </tr>
+            </tfoot>
+            <tbody>
+
+
+            {% for trick in app.user.tricks %}
+                <tr>
+                    <th>{{ trick.title }}</th>
+                    <td>{{ trick.description|u.truncate(15, '...') }}</td>
+                    <td>/{{ trick.slug }}</td>
+                    <td>{{ trick.images|length }}</td>
+                    <td>{{ trick.video|length }}</td>
+                    {# <td>{{ trick.comments|length }}</td> #}
+                    {# <td>47</td> #}
+                    <td>14</td>
+                    <td><a href="{{ path('tricks_show', {'id' : trick.id,'slug' : trick.slug}) }}">voir</a></td>
+                    {# <td><a href="{{ path('tricks_edit', {'id': trick.id}) }}">editer</a></td> #}
+
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Changez votre password</p>
+            </header>
+            <section class="modal-card-body">
+                {{ form_start(passwordForm) }}
+                {{ form_widget(passwordForm) }}
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-primary">Enregistrer</button>
+                <button class="button is-link" id="cancel-modal">Annuler</button>
+                {{ form_end(passwordForm) }}
+            </footer>
         </div>
-    </div>
-    <div class="debug">
-        <h1>DELETE ACCOUNT</h1>
-        {{ include('security/_delete_form.html.twig') }}
-    </div>
-
-    <div class="debug">
-        <h1>ADD/CHANGE IMAGE</h1>
-        {{ form_start(form) }}
-        {{ form_widget(form) }}
-
-        {# {% for image in trick.images %} #}
-        {# <div style="border: solid  #0a0a0a"> #}
-        {# <img src="{{ asset('/uploads/' ~ image.name) }}" alt="Image" width="600px"> #}
-        {# <a href="{{ path('tricks_image_delete', {'id': image.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Delete</a> #}
-        {# </div> #}
-        {# {% endfor %} #}
-        <button class="btn">{{ button_label|default('Save') }}</button>
-        {{ form_end(form) }}
-    </div>
-    <div class="debug">
-        <h1>CHANGE PASSWORD</h1>
-        {{ form_start(passwordForm) }}
-        {{ form_widget(passwordForm) }}
-        <button class="btn">{{ button_label|default('Save') }}</button>
-        {{ form_end(passwordForm) }}
     </div>
 {% endblock %}
+
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+            $(document).ready()
+            {
+                var $button = $("#password-modal"),
+                    $modale = $(".modal"),
+                    $cancelButton = $("#cancel-modal");
+
+                $button.click(function (e) {
+                    e.preventDefault();
+                    $modale.addClass('is-active');
+                })
+
+                $cancelButton.click(function (e) {
+                    e.preventDefault();
+                    $modale.removeClass('is-active');
+                })
+            }
+        </script>
+    {% endblock %}
+

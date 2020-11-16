@@ -9,7 +9,7 @@ $(document).ready(function () {
         e.preventDefault();
         // if (count < max_fields) { //max input box allowed
         count++; //text box increment
-        $(wrapper).append('<div><input type="text" id="form_videos_' + count + '"' + 'name="tricks[videos][' + count + ']"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
+        $(wrapper).append('<div><input class="input is-primary"  type="text" id="form_videos_' + count + '"' + 'name="tricks[videos][' + count + ']"/><a href="#" class="remove_field mb-3">Supprimer le champ ci-dessus</a></div>'); //add input box
         // }
     });
 
@@ -51,5 +51,55 @@ $(document).ready(function () {
             }).catch(e => alert(e))
             // alert(url);
         }
+    })
+    // TODO UGLY !! REFACTO THIS !!
+    var $firstTab = $('#trick-tab'),
+        $secondTab = $('#trick-second-tab'),
+        $thirdTab = $('#trick-third-tab'),
+        $fourthTab = $('#trick-fourth-tab'),
+        $firstTabButton = $('#first-tab-button'),
+        $thirdTabButton = $('#third-tab-button'),
+        $fourthTabButton = $('#fourth-tab-button'),
+        $secondTabButton = $('#second-tab-button');
+
+    $firstTabButton.click(function (e) {
+        $secondTabButton.removeClass('is-active');
+        $thirdTabButton.removeClass('is-active');
+        $fourthTabButton.removeClass('is-active');
+        $(this).addClass('is-active');
+        $firstTab.show();
+        $secondTab.hide();
+        $thirdTab.hide();
+        $fourthTab.hide();
+    })
+    $secondTabButton.click(function (e) {
+        $firstTabButton.removeClass('is-active');
+        $thirdTabButton.removeClass('is-active');
+        $fourthTabButton.removeClass('is-active');
+        $(this).addClass('is-active');
+        $firstTab.hide();
+        $secondTab.show();
+        $thirdTab.hide();
+        $fourthTab.hide();
+    })
+    $thirdTabButton.click(function (e) {
+        $firstTabButton.removeClass('is-active');
+        $secondTabButton.removeClass('is-active');
+        $fourthTabButton.removeClass('is-active');
+        $(this).addClass('is-active');
+        $firstTab.hide();
+        $secondTab.hide();
+        $thirdTab.show();
+        $fourthTab.hide();
+    })
+    $fourthTabButton.click(function (e) {
+        $firstTabButton.removeClass('is-active');
+        $thirdTabButton.removeClass('is-active');
+        $secondTabButton.removeClass('is-active');
+        $(this).addClass('is-active');
+        $firstTab.hide();
+        $secondTab.hide();
+        $thirdTab.hide();
+        $fourthTab.show();
     })
 })

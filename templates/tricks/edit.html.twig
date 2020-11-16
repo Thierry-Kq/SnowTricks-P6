@@ -3,48 +3,133 @@
 {% block title %}Edit Tricks{% endblock %}
 
 {% block body %}
-
+    {% set hero_title = "Edition" %}
+    {% set hero_subtitle = "Page d'édition du Trick : ' " ~ trick.title ~ " '" %}
+    {{ include('component/_hero_title.html.twig') }}
     {# TODO : gerer autrement le app.user null / role_user maybe ? #}
     {# * VOIR LIOR CHAMLA CHAPITRE 9.4 POUR ISGRANTED ET AUTHOR === #}
-    {# {% if (app.user == null) or (trick.author.id != app.user.id) or not is_granted('ROLE_ADMIN') %} #}
-    {% if not is_granted('ROLE_USER') or (trick.author.id != app.user.id) and not is_granted('ROLE_ADMIN') %}
-        {{ include('security/deny.html.twig') }}
-    {% else %}
-        <div class="row">
-            <div class="col-8">
+    {# {{ include('security/deny.html.twig') }} #}
+    {# {{ include('tricks/_delete_form.html.twig') }} #}
 
-                <h1>Edit Tricks</h1>
 
-                {{ include('tricks/_form.html.twig', {'button_label': 'Update'}) }}
+    <div class="container mt-6">
 
-                <a href="{{ path('tricks_index') }}">back to list</a>
+        <div class="tabs is-centered">
+            <ul>
+                <li class="is-active" id="first-tab-button">
+                    <a>
+                        <span class="icon is-small"><i class="fas fa-snowboarding" aria-hidden="true"></i></span>
+                        <span>Trick</span>
+                    </a>
+                </li>
+                <li id="second-tab-button">
+                    <a>
+                        <span class="icon is-small"><i class="fas fa-images" aria-hidden="true"></i></span>
+                        <span>Images</span>
+                    </a>
+                </li>
+                <li id="third-tab-button">
+                    <a>
+                        <span class="icon is-small"><i class="fas fa-film" aria-hidden="true"></i></span>
+                        <span>Vidéos</span>
+                    </a>
+                </li>
+                <li id="fourth-tab-button">
+                    <a>
+                        <span class="icon is-small"><i class="fas fa-code" aria-hidden="true"></i></span>
+                        <span>Slug</span>
+                    </a>
+                </li>
 
+            </ul>
+        </div>
+
+        {# TAB 1 #}
+        <div id="trick-tab">
+            {{ include('tricks/_form.html.twig', {'button_label': 'Update'}) }}
+        </div>
+        {# TAB 2 #}
+        <div id="trick-second-tab" style="display: none">
+
+
+            <div class="columns">
+                {% for key, image in trick.images %}
+                {% if key % 3 == 0 %}
             </div>
-            <div class="col-4">
-                Editer le slug : <strong>ATTENTION : le slug est utile au référencement et est nécéssaire pour les liens partagés, changer le slug est à éviter, surtout si il est en ligne depuis longtemps.</strong>
-                <br>
-                <br>
-                <a href="{{ path('edit_slug', {'id': trick.id }) }}">Automatique paraport au Titre (sauvegardez le titre avant)</a>
-                <br>
-                <br>
-                <p>Vous pouvez aussi le choisir vous mêmes, évitez cependant les accents et charactères spéciaux, en séparant les mots par un '-'. <a href="https://www.ya-graphic.com/bonnes-pratiques-pour-creer-des-urls-seo-friendly/">Voir un article sur les slugs et le référencement.</a></p>
-                <form method="post" action="{{ path('edit_slug', {'id': trick.id }) }}">
-                    <input type="text" name="q">
-                    <button class="btn">Send</button>
-                </form>
+            <div class="columns">
+                {% endif %}
+                <div class="column is-one-third">
+                    <figure class="image ">
+                        <img src="{{ asset('/uploads/' ~ image.name) }}" alt="Image" width="600px">
+                    </figure>
+                    <br>
+                    <a class="button is-primary mt-2" href="{{ path('tricks_image_delete', {'id': image.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Delete</a>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+        {# TAB 3 #}
+        <div id="trick-third-tab" style="display: none">
+
+            <div class="columns">
+                {% for key, video in trick.video %}
+                {% if key % 2 == 0 %}
+            </div>
+            <div class="columns">
+                {% endif %}
+                <div class="column is-half">
+
+
+                    {# {% if video.type == 'youtube' %} #}
+                    <iframe width="100%" height="250em" src="{{ 'https://www.youtube.com/embed/' ~ video.name }}" frameborder="0" allowfullscreen></iframe>
+                    {# {% set url = 'https://www.youtube.com/watch?v=' ~ video.name %} #}
+                    {# {% set url = 'https://www.dailymotion.com/video/' ~ video.name %} #}
+                    {# {% set url = '' %} #}
+                    <br>
+                    <a class="button is-primary mt-2" href="{{ path('tricks_video_delete', {'id': video.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ video.id) }}">Supprimer la video</a>
+                </div>
+                {% endfor %}
             </div>
         </div>
 
 
-        <div class="col-4">
-            {{ include('tricks/_delete_form.html.twig') }}
+        {# TAB 4 #}
+        <div id="trick-fourth-tab" style="display: none">
+            <article class="message is-small is-warning">
+                <div class="message-header">
+                    <p><i class="fas fa-exclamation-triangle"></i> Attention </p>
+                </div>
+                <div class="message-body">
+                    Le slug ( présent dans l'url de la page ) est utile au référencement et est nécéssaire pour les liens partagés, changer le slug est à éviter, surtout si cette page est en ligne depuis longtemps.
+                </div>
+            </article>
 
+            <p class="mb-3">
+                Changez automatiquement le slug en fonction du titre du trick ( bonne pratique pour le référencement )
+                <br><a class="button is-primary mt-2" href="{{ path('edit_slug', {'id': trick.id }) }}">Cliquez ici</a>
+            </p>
+            <hr>
+
+            <p class="mb-3">
+                Vous pouvez aussi le choisir vous mêmes, évitez cependant les accents et charactères spéciaux, en séparant les mots par un '-'. <a href="https://www.ya-graphic.com/bonnes-pratiques-pour-creer-des-urls-seo-friendly/">Voir un article sur les slugs et le référencement.</a>
+            </p>
+            <p class="mb-3">
+            <form method="post" action="{{ path('edit_slug', {'id': trick.id }) }}">
+                <div class="field">
+                    <label class="label">Slug</label>
+                    <div class="control">
+                        <input class="input is-primary" placeholder="exemple-de-slug-correct" type="text" name="q">
+                    </div>
+                </div>
+                {# aa #}
+                <button class="button is-primary mt-3">Enregistrer</button>
+            </form>
+            </p>
         </div>
-
-
-    {% endif %}
+    </div>
 {% endblock %}
 
-{% block javascripts %}
-    <script src="{{ asset('js/img-video-form.js') }}"></script>
-{% endblock %}
+    {% block javascripts %}
+        <script src="{{ asset('js/img-video-form.js') }}"></script>
+    {% endblock %}

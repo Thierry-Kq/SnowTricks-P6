@@ -3,10 +3,14 @@
 namespace App\Form;
 
 use App\Entity\User;
+
+//use Doctrine\DBAL\Types\TextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
@@ -18,12 +22,16 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username')
-            ->add('email')
+            ->add('username', TextType::class, ['attr' => ['class' => 'input is-primary', 'placeholder' => 'Alex Smith']])
+            ->add('email', EmailType::class, ['attr' => ['class' => 'input is-primary', 'placeholder' => 'Alex@Smith.com']])
             ->add(
                 'agreeTerms',
                 CheckboxType::class,
                 [
+                    'attr' => [
+                        'class' => 'is-primary',
+                    ],
+                    'label' => 'checkbox',
                     'mapped' => false,
                     'constraints' => [
                         new IsTrue(
@@ -39,8 +47,8 @@ class RegistrationFormType extends AbstractType
                 RepeatedType::class,
                 [
                     'type' => PasswordType::class,
-                    'first_options' => ['label' => 'Password'],
-                    'second_options' => ['label' => 'Repeat Password'],
+                    'first_options' => ['label' => 'Password', 'attr' => ['class' => 'input is-primary'], 'label_attr' => ['class' => 'label']],
+                    'second_options' => ['label' => 'Repeat Password', 'attr' => ['class' => 'input is-primary'], 'label_attr' => ['class' => 'label mt-2']],
 
                     // instead of being set onto the object directly,
                     // this is read and encoded in the controller
