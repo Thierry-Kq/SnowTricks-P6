@@ -9,9 +9,6 @@
     {% set hero_subtitle = "" %}
     {{ include('component/_hero_homepage.html.twig') }}
 
-
-
-
     <div class="columns is-desktop mt-6 ml-6 mr-6 is-multiline" id="top_tricks">
         {% for trick in tricks %}
             <div class="column is-one-quarter">
@@ -60,10 +57,7 @@
                     </div>
                 </div>
             </div>
-        {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
-            </tr>
         {% endfor %}
     </div>
+    {{ knp_pagination_render(tricks) }}
 {% endblock %}

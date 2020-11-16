@@ -12,6 +12,7 @@ use App\Service\ImagesService;
 use App\Service\ToolsService;
 use App\Service\VideosService;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,12 +27,27 @@ class TricksController extends AbstractController
     /**
      * @Route("/", name="tricks_index", methods={"GET"})
      */
-    public function index(TricksRepository $tricksRepository): Response
-    {
+    public function index(
+        TricksRepository $tricksRepository,
+        PaginatorInterface $paginator,
+        Request $request
+    ): Response {
+
+        // paginator test
+        $data = $tricksRepository->findAll();
+        $tricks = $paginator->paginate(
+            $data, // Requête contenant les données à paginer (ici nos articles)
+            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
+            8
+        );
+
+        // we set a custom template for the pagination_render
+        $tricks->setTemplate('component/_pagination.html.twig');
+
         return $this->render(
             'tricks/index.html.twig',
             [
-                'tricks' => $tricksRepository->findAll(),
+                'tricks' => $tricks,
             ]
         );
     }
