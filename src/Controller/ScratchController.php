@@ -16,22 +16,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class ScratchController extends AbstractController
 {
     /**
-     * @Route("/", name="homepage")
-     */
-    public function index()
-    {
-        return $this->render('homepage.html.twig');
-    }
-
-    /**
-     * @Route("/scratch", name="scratch")
-     */
-    public function scratch(MailerInterface $mailer)
-    {
-        return $this->render('scratch/index.html.twig');
-    }
-
-    /**
      * @Route("/conditions-d-utilisation", name="conditions")
      */
     public function condition()
