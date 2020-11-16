@@ -35,6 +35,9 @@
 {# <h1>ROLE USER</h1> #}
 {# {% endif %} #}
 {% block body %}{% endblock %}
+
+{{ include('component/_footer.html.twig') }}
+
 {# </div> #}
 {% block javascripts %} {{ encore_entry_script_tags('app') }}{% endblock %}
 </body>
