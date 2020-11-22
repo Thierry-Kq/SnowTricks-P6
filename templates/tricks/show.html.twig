@@ -19,6 +19,9 @@
     </section>
     <div class="container mt-6">
         <p>{{ trick.description }}</p>
+        {% for comment in trick.comments %}
+            {{ dump(comment.content) }}
+        {% endfor %}
     </div>
     {# {{ dump(trick) }} #}
 
