@@ -17,13 +17,41 @@
             </div>
         </div>
     </section>
+
+
+
     <div class="container mt-6">
+
         <p>{{ trick.description }}</p>
+
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button class="button is-primary">Enregistrer</button>
+        {{ form_end(form) }}
+
         {% for comment in trick.comments %}
-            {{ dump(comment.content) }}
+            <div class="box">
+                <div class="message-body">
+                    <div class="columns">
+                        <div class="column is-one-fifth">
+                            <figure class="image is-128x128">
+                                {% if comment.user.image is not null %}
+                                    {% set image_source = asset('/uploads/' ~ comment.user.image.name) %}
+                                {% else %}
+                                    {% set image_source = asset('/img/unknow.jpg') %}
+                                {% endif %}
+                                <img class="" src="{{ image_source }}" alt="Image">
+                            </figure>
+                            <p class="mt-2">
+                                Par <strong>{{ comment.user.username }} </strong> <small>le todo : pubdate</small>
+                            </p>
+                        </div>
+                        <div class="column">{{ comment.content }}</div>
+                    </div>
+                </div>
+            </div>
         {% endfor %}
     </div>
-    {# {{ dump(trick) }} #}
 
 
 

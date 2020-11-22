@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Entity\Images;
 use App\Entity\Tricks;
 use App\Entity\User;
 use App\Entity\Video;
+use App\Form\CommentType;
 use App\Form\TricksType;
 use App\Repository\TricksRepository;
 use App\Service\ImagesService;
@@ -97,14 +99,32 @@ class TricksController extends AbstractController
     }
 
     /**
-     * @Route("/tricks/{id}-{slug}", name="tricks_show", methods={"GET"})
+     * @Route("/tricks/{id}-{slug}", name="tricks_show", methods={"GET", "POST"})
      */
-    public function show(Tricks $trick): Response
-    {
+    public function show(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        Tricks $trick
+    ): Response {
+
+        $comment = new Comment();
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
+
+        if ($this->getUser() && $form->isSubmitted() && $form->isValid()) {
+
+            $comment->setTrick($trick);
+            $comment->setUser($this->getUser());
+
+            $entityManager->persist($comment);
+            $entityManager->flush();
+        }
+
         return $this->render(
             'tricks/show.html.twig',
             [
                 'trick' => $trick,
+                'form' => $form->createView(),
             ]
         );
     }
