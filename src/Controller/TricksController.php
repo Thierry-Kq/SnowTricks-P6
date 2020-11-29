@@ -33,23 +33,21 @@ class TricksController extends AbstractController
         Request $request
     ): Response {
 
-        // todo : my own paginator coz no bundle
-        // paginator test
-        $data = $tricksRepository->getAllActivesTricks();
-//        $data = $tricksRepository->findAll();
-        $tricks = $paginator->paginate(
-            $data, // Requête contenant les données à paginer (ici nos articles)
-            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
-            8
-        );
+        $limit = 8;
+        $page = $request->query->getInt('page', 1);
+        $page = $page === 0 ? 1 : $page;
+        $tricks = $tricksRepository->getPaginatedTricks($page, $limit);
+        $total = $tricksRepository->getTotalTricks();
 
-        // we set a custom template for the pagination_render
-        $tricks->setTemplate('component/_pagination.html.twig');
+
 
         return $this->render(
             'tricks/index.html.twig',
             [
                 'tricks' => $tricks,
+                'total' => $total,
+                'limit' => $limit,
+                'page' => $page,
             ]
         );
     }

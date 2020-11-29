@@ -44,8 +44,7 @@
                             </p>
 
                             <p class="block">
-                                {# TODO : created ou updated pour les tricks #}
-                                <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+                                {{ trick.createdAt|format_date }}
                             </p>
 
                             <p class="block">
@@ -59,5 +58,27 @@
             </div>
         {% endfor %}
     </div>
-    {{ knp_pagination_render(tricks) }}
+
+    <div class="container">
+        <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+            {% if  page > 1 %}
+                <a href="?page={{ page - 1 }}" class="pagination-previous">Précédent</a>
+            {% else %}
+                <a class="pagination-previous" disabled>Précédent</a>
+            {% endif %}
+
+            {% if  (total / limit)|round(0, 'ceil') == page %}
+                <a class="pagination-next" disabled>Suivant</a>
+            {% else %}
+                <a href="?page={{ page + 1 }}" class="pagination-next">Suivant</a>
+            {% endif %}
+
+            <ul class="pagination-list">
+                {% for item in 1..((total / limit)|round(0, 'ceil')) %}
+                    <li><a href="?page={{ item }}" class="pagination-link {{ item == page ? 'is-current' : '' }}">{{ item }}</a></li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </div>
+
 {% endblock %}
