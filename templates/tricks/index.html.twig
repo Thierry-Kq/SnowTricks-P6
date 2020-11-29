@@ -50,6 +50,8 @@
                             <p class="block">
                                 {# todo : only if author || admin + link to delete #}
                                 <a href="{{ path('tricks_edit', {'id': trick.id}) }}"><i class="fas fa-edit is-primary"></i></a>
+                                {{ include('tricks/_delete_form.html.twig') }}
+
                                 <i class="fas fa-trash-alt"></i>
                             </p>
                         </div>

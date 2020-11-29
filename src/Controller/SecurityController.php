@@ -16,6 +16,8 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class SecurityController extends AbstractController
 {
@@ -44,6 +46,7 @@ class SecurityController extends AbstractController
     }
 
     /**
+     * @Security(" is_granted('ROLE_USER')")
      * @Route ("/dashboard", name="app_dashboard")
      */
     public function dashboard(
@@ -52,9 +55,7 @@ class SecurityController extends AbstractController
         ImagesService $imagesService,
         UserPasswordEncoderInterface $passwordEncoder
     ) {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }
+
         $user = $this->getUser();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
@@ -95,6 +96,7 @@ class SecurityController extends AbstractController
     }
 
     /**
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and user === user")
      * @Route("/delete-account/{id}", name="app_delete_user", methods={"DELETE"})
      */
     public function delete(

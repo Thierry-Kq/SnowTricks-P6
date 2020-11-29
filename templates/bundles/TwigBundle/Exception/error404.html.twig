@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Page inexistante !{% endblock %}
+{% block body %}
+
+    {% set hero_title = "Page non trouvée !" %}
+    {% set hero_subtitle = "Désolé, cette page n'existe pas." %}
+    {{ include('component/_hero_homepage.html.twig') }}
+
+
+    {% block footer %}{% endblock %}
+
+{% endblock %}

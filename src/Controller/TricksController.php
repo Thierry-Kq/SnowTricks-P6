@@ -19,6 +19,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 
 class TricksController extends AbstractController
@@ -50,6 +52,7 @@ class TricksController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/tricks/new", name="tricks_new", methods={"GET","POST"})
      */
     public function new(
@@ -58,16 +61,13 @@ class TricksController extends AbstractController
         ImagesService $imagesService,
         VideosService $videosService
     ) {
-        $user = $this->getUser();
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
         $trick = new Tricks();
         $form = $this->createForm(TricksType::class, $trick);
-        $trick->setAuthor($user);
 
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->getUser();
+            $trick->setAuthor($user);
 
             // get images here
             $images = $form->get('images')->getData();
@@ -75,7 +75,6 @@ class TricksController extends AbstractController
             foreach ($images as $image) {
                 $imagesService->addImages($image, $trick, $this->getParameter('images_directory'));
             }
-
             $videos = $form->get('videos')->getData();
             foreach (array_filter($videos) as $video) {
                 $videosService->addVideoTick($trick, array_filter($video));
@@ -109,6 +108,7 @@ class TricksController extends AbstractController
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
 
+//        todo : dans la vue, cacher le new comment if not logged
         if ($this->getUser() && $form->isSubmitted() && $form->isValid()) {
 
             $comment->setTrick($trick);
@@ -118,13 +118,11 @@ class TricksController extends AbstractController
             $entityManager->flush();
         }
 
-
         $limit = 6;
         $page = $request->query->getInt('page', 1);
         $page = $page === 0 ? 1 : $page;
         $comments = $commentRepository->getPaginatedComments($page, $limit, $trick->getId());
         $total = $commentRepository->getTotalCommentsByOneTrick($trick->getId());
-
 
         return $this->render(
             'tricks/show.html.twig',
@@ -140,6 +138,7 @@ class TricksController extends AbstractController
     }
 
     /**
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and trick.getAuthor() === user")
      * @Route("/tricks/{id}/edit", name="tricks_edit", methods={"GET","POST"})
      */
     public function edit(
@@ -153,13 +152,6 @@ class TricksController extends AbstractController
 
         $form = $this->createForm(TricksType::class, $trick);
         $form->handleRequest($request);
-
-//        $user = $this->getUser();
-        // if not logged = bug
-        // deny access if not author or admin
-//        if ($user->getId() != $trick->getAuthor()->getId()) {
-//            $this->denyAccessUnlessGranted('ROLE_ADMIN');
-//        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             // get images here
@@ -195,6 +187,7 @@ class TricksController extends AbstractController
     }
 
     /**
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and trick.getAuthor() === user")
      * @Route("/tricks/{id}", name="tricks_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Tricks $trick): Response
@@ -204,7 +197,9 @@ class TricksController extends AbstractController
 
             foreach ($trick->getImages() as $img) {
                 $nom = $img->getName();
-                unlink($this->getParameter('images_directory') . '/' . $nom); // supprime le fichier dans uploads
+                if ($nom != 'placeholder.png') { // dont remove img placeholder from fixtures
+                    unlink($this->getParameter('images_directory') . '/' . $nom); // supprime le fichier dans uploads
+                }
                 $trick->removeImage($img); // supprime le trickId dans image
                 // les images seront delete en base car orphanRemoval=true dans la relation Tricks->Images
             }
@@ -216,6 +211,7 @@ class TricksController extends AbstractController
     }
 
     /**
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and trick.getAuthor() === user")
      * @Route("/tricks/delete/image/{id}", name="tricks_image_delete", methods={"DELETE"})
      */
     public function deleteImage(
@@ -236,6 +232,7 @@ class TricksController extends AbstractController
     }
 
     /**
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and trick.getAuthor() === user")
      * @Route("/tricks/delete/video/{id}", name="tricks_video_delete", methods={"DELETE"})
      */
     public function deleteVideo(
@@ -256,10 +253,8 @@ class TricksController extends AbstractController
         return new JsonResponse(['error' => 'Token Invalide'], 400);
     }
 
-
-//    TODO : test if i can edit with url, no button (csrfToken ??)
-// TODO : recup user courant et verif si il est owner du trick
     /**
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and trick.getAuthor() === user")
      * @Route("/tricks/{id}/edit-slug", name="edit_slug")
      */
     public function editSlug(

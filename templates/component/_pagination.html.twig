@@ -1,46 +1,45 @@
-<div class="container">
-    <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-        {% if  page > 1 %}
-            <a href="?page={{ page - 1 }}" class="pagination-previous">Précédent</a>
-        {% else %}
-            <a class="pagination-previous" disabled>Précédent</a>
-        {% endif %}
+{% if total > 0 %}
+    <div class="container">
+        <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+            {% if  page > 1 %}
+                <a href="?page={{ page - 1 }}" class="pagination-previous">Précédent</a>
+            {% else %}
+                <a class="pagination-previous" disabled>Précédent</a>
+            {% endif %}
 
-        {% if  (total / limit)|round(0, 'ceil') == page %}
-            <a class="pagination-next" disabled>Suivant</a>
-        {% else %}
-            <a href="?page={{ page + 1 }}" class="pagination-next">Suivant</a>
-        {% endif %}
+            {% if  (total / limit)|round(0, 'ceil') == page %}
+                <a class="pagination-next" disabled>Suivant</a>
+            {% else %}
+                <a href="?page={{ page + 1 }}" class="pagination-next">Suivant</a>
+            {% endif %}
 
-        <ul class="pagination-list">
-            {% for item in 1..((total / limit)|round(0, 'ceil')) %}
-                <li><a href="?page={{ item }}" class="pagination-link {{ item == page ? 'is-current' : '' }}">{{ item }}</a></li>
-            {% endfor %}
-        </ul>
-    </nav>
-</div>
-
-
-
+            <ul class="pagination-list">
+                {% for item in 1..((total / limit)|round(0, 'ceil')) %}
+                    <li><a href="?page={{ item }}" class="pagination-link {{ item == page ? 'is-current' : '' }}">{{ item }}</a></li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </div>
+{% endif %}
 
 
 {# thx to https://ourcodeworld.com/articles/read/593/using-a-bootstrap-4-pagination-control-layout-with-knppaginatorbundle-in-symfony-3 for this template example #}
 {# // todo : see the setTemplate before delete coz it was hard #}
 {# // we set a custom template for the pagination_render #}
 {# //        $tricks->setTemplate('component/_pagination.html.twig'); #}
-{#{% if pageCount > 1 %}#}
-{#    <div class="container mt-6">#}
+{# {% if pageCount > 1 %} #}
+{# <div class="container mt-6"> #}
 
-{#        <nav class="pagination is-centered" role="navigation" aria-label="pagination">#}
-{#            <ul class="pagination-list">#}
-{#                {% for page in pagesInRange %}#}
-{#                    {% if page != current %}#}
-{#                        <li><a href="{{ path(route, query|merge({(pageParameterName): page})) }}" class="pagination-link" aria-label="Goto page 45">{{ page }}</a></li>#}
-{#                    {% else %}#}
-{#                        <li><a class="pagination-link is-current" aria-label="Page 46" aria-current="page">{{ page }}</a></li>#}
-{#                    {% endif %}#}
-{#                {% endfor %}#}
-{#            </ul>#}
-{#        </nav>#}
-{#    </div>#}
-{#{% endif %}#}
+{# <nav class="pagination is-centered" role="navigation" aria-label="pagination"> #}
+{# <ul class="pagination-list"> #}
+{# {% for page in pagesInRange %} #}
+{# {% if page != current %} #}
+{# <li><a href="{{ path(route, query|merge({(pageParameterName): page})) }}" class="pagination-link" aria-label="Goto page 45">{{ page }}</a></li> #}
+{# {% else %} #}
+{# <li><a class="pagination-link is-current" aria-label="Page 46" aria-current="page">{{ page }}</a></li> #}
+{# {% endif %} #}
+{# {% endfor %} #}
+{# </ul> #}
+{# </nav> #}
+{# </div> #}
+{# {% endif %}  #}
