@@ -26,7 +26,7 @@
 
         <button class="button is-primary" id="comment-modal">Poster un commentaire</button>
 
-        {% for comment in trick.comments %}
+        {% for comment in comments %}
             <div class="box">
                 <div class="message-body">
                     <div class="columns">
@@ -57,7 +57,8 @@
             </div>
         {% endfor %}
     </div>
-
+    {{ include('component/_pagination.html.twig') }}
+    
     <div class="modal new-com-modal">
         <div class="modal-background"></div>
         <div class="modal-card">

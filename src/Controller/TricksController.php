@@ -5,16 +5,15 @@ namespace App\Controller;
 use App\Entity\Comment;
 use App\Entity\Images;
 use App\Entity\Tricks;
-use App\Entity\User;
 use App\Entity\Video;
 use App\Form\CommentType;
 use App\Form\TricksType;
+use App\Repository\CommentRepository;
 use App\Repository\TricksRepository;
 use App\Service\ImagesService;
 use App\Service\ToolsService;
 use App\Service\VideosService;
 use Doctrine\ORM\EntityManagerInterface;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +28,6 @@ class TricksController extends AbstractController
      */
     public function index(
         TricksRepository $tricksRepository,
-        PaginatorInterface $paginator,
         Request $request
     ): Response {
 
@@ -38,7 +36,6 @@ class TricksController extends AbstractController
         $page = $page === 0 ? 1 : $page;
         $tricks = $tricksRepository->getPaginatedTricks($page, $limit);
         $total = $tricksRepository->getTotalTricks();
-
 
 
         return $this->render(
@@ -104,7 +101,8 @@ class TricksController extends AbstractController
     public function show(
         Request $request,
         EntityManagerInterface $entityManager,
-        Tricks $trick
+        Tricks $trick,
+        CommentRepository $commentRepository
     ): Response {
 
         $comment = new Comment();
@@ -120,11 +118,23 @@ class TricksController extends AbstractController
             $entityManager->flush();
         }
 
+
+        $limit = 6;
+        $page = $request->query->getInt('page', 1);
+        $page = $page === 0 ? 1 : $page;
+        $comments = $commentRepository->getPaginatedComments($page, $limit, $trick->getId());
+        $total = $commentRepository->getTotalCommentsByOneTrick($trick->getId());
+
+
         return $this->render(
             'tricks/show.html.twig',
             [
                 'trick' => $trick,
                 'form' => $form->createView(),
+                'limit' => $limit,
+                'page' => $page,
+                'comments' => $comments,
+                'total' => $total,
             ]
         );
     }
