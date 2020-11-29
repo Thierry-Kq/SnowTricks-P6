@@ -40,7 +40,7 @@
                                 <img class="" src="{{ image_source }}" alt="Image">
                             </figure>
                             <p class="mt-2">
-                                Par <strong>{{ comment.user.username }} </strong> <small>le todo : pubdate</small>
+                                Par <strong>{{ comment.user.username }} </strong> <small>{{ comment.createdAt|format_date }}</small>
                                 {# todo : only if author || admin + edit ? #}
                             </p>
 
@@ -130,7 +130,7 @@
                     ).then(data => {
                         // fais des choses avec la response
                         if (data.success)
-                            $a.parent().parent().parent().parent().parent().remove()
+                            $a.parent().parent().parent().parent().remove()
                         else
                             alert(data.error)
                     }).catch(e => alert(e))
