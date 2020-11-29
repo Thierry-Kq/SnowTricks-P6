@@ -32,7 +32,6 @@ class UserFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
 //        $users = [];
-        $videoCollection = $this->createYoutubeVideos();
 
         $userFirst = new User();
         $userFirst->setUsername('SnowTricks')
@@ -59,6 +58,8 @@ class UserFixtures extends Fixture
 
 
         for ($trickNumber = 1; $trickNumber <= 10; $trickNumber++) {
+            $videoCollection = $this->createYoutubeVideos();
+
             $trick = new Tricks();
             $trick->setTitle('Mon trick numéro ' . $trickNumber . ' !')
                 ->setDescription('Ma description de ce trick numéro ' . $trickNumber . ' !')
