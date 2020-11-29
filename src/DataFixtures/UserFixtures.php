@@ -4,7 +4,6 @@ namespace App\DataFixtures;
 
 use App\Entity\Comment;
 use App\Entity\Images;
-use App\Entity\Trick;
 use App\Entity\Tricks;
 use App\Entity\User;
 use App\Entity\Video;

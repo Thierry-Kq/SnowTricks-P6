@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{# todo : repasser sur tout les block title #}
+{% block title %}Tricks{% endblock %}
+{% block body %}
+    {% block navbar %}{% endblock %}
+
+    {% set hero_title = "" %}
+    {% set hero_subtitle = "" %}
+    {{ include('component/_hero_homepage.html.twig') }}
+
+    <div class="modal is-active" style="opacity: 0.7">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Editer le commentaire</p>
+            </header>
+            <section class="modal-card-body">
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-primary">Enregistrer</button>
+                <button class="button is-link cancel-modal" id="cancel-modal">Annuler</button>
+                {{ form_end(form) }}
+            </footer>
+        </div>
+    </div>
+    {% block footer %}{% endblock %}
+
+{% endblock %}

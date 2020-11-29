@@ -33,8 +33,10 @@ class TricksController extends AbstractController
         Request $request
     ): Response {
 
+        // todo : my own paginator coz no bundle
         // paginator test
-        $data = $tricksRepository->findAll();
+        $data = $tricksRepository->getAllActivesTricks();
+//        $data = $tricksRepository->findAll();
         $tricks = $paginator->paginate(
             $data, // Requête contenant les données à paginer (ici nos articles)
             $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page

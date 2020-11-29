@@ -20,6 +20,22 @@ class TricksRepository extends ServiceEntityRepository
     }
 
 
+//    todo : check and optimize all request
+    public function getAllActivesTricks()
+    {
+        return $this->createQueryBuilder('t')
+            ->leftJoin('t.comments', 'c')
+            ->addSelect('c')
+            ->innerJoin('t.author', 'a')
+            ->addSelect('a')
+            ->leftJoin('t.video', 'v')
+            ->addSelect('v')
+            ->leftJoin('t.images', 'i')
+            ->addSelect('i')
+            ->getQuery();
+    }
+
+
     public function getAllTrick()
     {
         return $this->createQueryBuilder('t')
