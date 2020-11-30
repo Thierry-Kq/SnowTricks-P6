@@ -46,15 +46,7 @@
                             <p class="block">
                                 {{ trick.createdAt|format_date }}
                             </p>
-
-                            <p class="block">
-                                {# todo : only if author || admin + link to delete #}
-                                <a href="{{ path('tricks_edit', {'id': trick.id}) }}"><i class="fas fa-edit is-primary"></i></a>
-
-                                <a href="{{ path('tricks_delete', {'id': trick.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ trick.id) }}">
-                                    <i class="fas fa-trash-alt"></i>
-                                </a>
-                            </p>
+                            {{ include('component/_trick_edit_icons.html.twig') }}
                         </div>
                     </div>
                 </div>

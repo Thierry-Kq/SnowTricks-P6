@@ -23,6 +23,7 @@
     <div class="container mt-6">
 
         <p>{{ trick.description }}</p>
+        {{ include('component/_trick_edit_icons.html.twig') }}
 
         <button class="button is-primary" id="comment-modal">Poster un commentaire</button>
 
@@ -41,15 +42,8 @@
                             </figure>
                             <p class="mt-2">
                                 Par <strong>{{ comment.user.username }} </strong> <small>{{ comment.createdAt|format_date }}</small>
-                                {# todo : only if author || admin + edit ? #}
                             </p>
-
-                            <a href="{{ path('trick_comment_edit', {'id': comment.id}) }}">
-                                <i class="fas fa-edit is-primary edit-comment"></i>
-                            </a>
-                            <a href="{{ path('trick_comment_delete', {'id': comment.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ comment.id) }}">
-                                <i class="fas fa-trash-alt"></i>
-                            </a>
+                            {{ include('component/_comment_edit_icons.html.twig') }}
                         </div>
                         <div class="column">{{ comment.content }}</div>
                     </div>

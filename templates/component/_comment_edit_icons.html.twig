@@ -1,0 +1,8 @@
+{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and app.user.id == comment.user.id %}
+    <a href="{{ path('trick_comment_edit', {'id': comment.id}) }}">
+        <i class="fas fa-edit is-primary edit-comment"></i>
+    </a>
+    <a href="{{ path('trick_comment_delete', {'id': comment.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ comment.id) }}">
+        <i class="fas fa-trash-alt"></i>
+    </a>
+{% endif %}
