@@ -39,8 +39,6 @@ class CommentsController extends AbstractController
         return new JsonResponse(['error' => 'Token Invalide'], 400);
     }
 
-//    todo : le button annuler a l air de valider
-
     /**
      * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and comment.getUser() === user")
      * @Route("/comment/{id}/edit", name="trick_comment_edit")
@@ -54,19 +52,27 @@ class CommentsController extends AbstractController
 
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
+        $trick = $comment->getTrick();
         if ($this->getUser() && $form->isSubmitted() && $form->isValid()) {
 
-            $trick = $comment->getTrick();
             $entityManager->persist($comment);
             $entityManager->flush();
 
             return $this->redirectToRoute('tricks_show', ['id' => $trick->getId(), 'slug' => $trick->getSlug()]);
         }
 
+        $trickUrl = $this->generateUrl(
+            'tricks_show',
+            [
+                'id' => $trick->getId(),
+                'slug' => $trick->getSlug(),
+            ]
+        );
+
         return $this->render(
             'tricks/edit_comment.html.twig',
             [
-                'trick' => $comment->getTrick()->getId(),
+                'trickUrl' => $trickUrl,
                 'form' => $form->createView(),
             ]
         );

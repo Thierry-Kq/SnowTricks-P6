@@ -108,7 +108,6 @@ class TricksController extends AbstractController
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
 
-//        todo : dans la vue, cacher le new comment if not logged
         if ($this->getUser() && $form->isSubmitted() && $form->isValid()) {
 
             $comment->setTrick($trick);

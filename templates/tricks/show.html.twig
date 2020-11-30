@@ -25,8 +25,9 @@
         <p>{{ trick.description }}</p>
         {{ include('component/_trick_edit_icons.html.twig') }}
 
-        <button class="button is-primary" id="comment-modal">Poster un commentaire</button>
-
+        {% if is_granted('ROLE_USER') %}
+            <button class="button is-primary" id="comment-modal">Poster un commentaire</button>
+        {% endif %}
         {% for comment in comments %}
             <div class="box">
                 <div class="message-body">
