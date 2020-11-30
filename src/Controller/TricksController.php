@@ -190,11 +190,14 @@ class TricksController extends AbstractController
      * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and trick.getAuthor() === user")
      * @Route("/tricks/{id}", name="tricks_delete", methods={"DELETE"})
      */
-    public function delete(Request $request, Tricks $trick): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $trick->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+    public function delete(
+        Request $request,
+        Tricks $trick,
+        EntityManagerInterface $entityManager
+    ): Response {
 
+        $data = json_decode($request->getContent(), true);
+        if ($this->isCsrfTokenValid('delete' . $trick->getId(), $data['_token'])) {
             foreach ($trick->getImages() as $img) {
                 $nom = $img->getName();
                 if ($nom != 'placeholder.png') { // dont remove img placeholder from fixtures
@@ -205,9 +208,12 @@ class TricksController extends AbstractController
             }
             $entityManager->remove($trick);
             $entityManager->flush();
+
+            // on repond en json
+            return new JsonResponse(['success' => 1]);
         }
 
-        return $this->redirectToRoute('tricks_index');
+        return new JsonResponse(['error' => 'Token Invalide'], 400);
     }
 
     /**

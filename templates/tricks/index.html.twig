@@ -50,9 +50,10 @@
                             <p class="block">
                                 {# todo : only if author || admin + link to delete #}
                                 <a href="{{ path('tricks_edit', {'id': trick.id}) }}"><i class="fas fa-edit is-primary"></i></a>
-                                {{ include('tricks/_delete_form.html.twig') }}
 
-                                <i class="fas fa-trash-alt"></i>
+                                <a href="{{ path('tricks_delete', {'id': trick.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ trick.id) }}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
                             </p>
                         </div>
                     </div>
@@ -63,3 +64,43 @@
     {{ include('component/_pagination.html.twig') }}
 
 {% endblock %}
+
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+            $(document).ready()
+            {
+                var $a = $("a[data-delete]");
+
+                $a.click(function (e) {
+                    e.preventDefault();
+
+                    var $a = $(this);
+                    var token = $(this).attr("data-token");
+                    var url = $(this).attr("href");
+                    console.log($a, url, token)
+                    if (confirm("Sur ???")) {
+
+                        // fetch = requete (jusquau premier then)
+                        fetch(url, {
+                            method: "DELETE",
+                            headers: {
+                                "X-Requested-With": "XMLHttpRequest",
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({"_token": token})
+                        }).then(
+                            //    recup la reponse json
+                            response => response.json()
+                        ).then(data => {
+                            // fais des choses avec la response
+                            if (data.success)
+                                $a.parent().parent().parent().parent().parent().remove()
+                            else
+                                alert(data.error)
+                        }).catch(e => alert(e))
+                    }
+                })
+            }
+        </script>
+    {% endblock %}
