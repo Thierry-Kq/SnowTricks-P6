@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('owl/owl.theme.default.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('owl/owl.carousel.min.css') }}">
+
+{% endblock %}
+{% block body %}
+    <div class="owl-carousel">
+        <div><img src="{{ asset('/img/home-bg2.jpg') }}" alt=""></div>
+        <div><img src="{{ asset('/img/home-bg2.jpg') }}" alt=""></div>
+        <div><img src="{{ asset('/img/home-bg2.jpg') }}" alt=""></div>
+        <div><img src="{{ asset('/img/home-bg2.jpg') }}" alt=""></div>
+        <div><img src="{{ asset('/img/home-bg2.jpg') }}" alt=""></div>
+        <div><img src="{{ asset('/img/home-bg2.jpg') }}" alt=""></div>
+        <div><img src="{{ asset('/img/home-bg2.jpg') }}" alt=""></div>
+    </div>
+    <h1>carousel ici</h1>
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('owl/owl.carousel.min.js') }}"></script>
+    <script>
+
+        $(document).ready(function () {
+            $(".owl-carousel").owlCarousel();
+        });
+    </script>
+{% endblock %}

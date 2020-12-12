@@ -216,7 +216,7 @@ class TricksController extends AbstractController
     }
 
     /**
-     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and trick.getAuthor() === user")
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')")
      * @Route("/tricks/delete/image/{id}", name="tricks_image_delete", methods={"DELETE"})
      */
     public function deleteImage(
@@ -225,7 +225,6 @@ class TricksController extends AbstractController
         ImagesService $imagesService
     ) {
         $data = json_decode($request->getContent(), true);
-
         if ($this->isCsrfTokenValid('delete' . $image->getId(), $data['_token'])) {
             $imagesService->deleteImage($image, $this->getParameter('images_directory') . '/' . $image->getName());
 

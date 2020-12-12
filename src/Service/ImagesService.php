@@ -23,6 +23,7 @@ class ImagesService
 
     public function addImages($image, $entity, $path)
     {
+//        dd(getimagesize($image));
         $fichier = md5(uniqid()) . '.' . $image->guessExtension();
 
         $image->move(
@@ -51,7 +52,11 @@ class ImagesService
         Images $image,
         $path
     ) {
-        unlink($path);
+        $nom = $image->getName();
+        if ($nom != 'placeholder.png') { // dont remove img placeholder from fixtures
+            unlink($path); // supprime le fichier dans uploads
+        }
+//        unlink($path);
         $this->entityManager->remove($image);
         $this->entityManager->flush();
     }

@@ -1,5 +1,10 @@
 {% extends 'base.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('owl/owl.theme.default.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('owl/owl.carousel.min.css') }}">
 
+{% endblock %}
 {% block title %}Tricks{% endblock %}
 
 {% block body %}
@@ -8,19 +13,49 @@
     {% set hero_subtitle = "" %}
     {{ include('component/_hero_trick_show.html.twig') }}
 
-    <section class="hero is-primary is-medium">
+    <section class="hero">
         <div class="hero-body">
-            <div class="container">
-                <h1 class="title">
-                    Barre video/images (caroussel?)
-                </h1>
-            </div>
         </div>
     </section>
 
+    <section class="hero">
+        <div class="owl-carousel">
+            {% for image in trick.images %}
+                <div><img src="{{ asset('/uploads/' ~ image.name) }}" alt=""></div>
+            {% endfor %}
+        </div>
+    </section>
+    <div class="container">
+
+        {# todo : maybe migrate this to another template and include (used in edit trick twig too)
+        and add a tab or something to not display videos or show/hide them
+        #}
+        <div class="columns">
+            {% for key, video in trick.video %}
+            {% if key % 2 == 0 %}
+        </div>
+        <div class="columns">
+            {% endif %}
+            <div class="column is-half">
 
 
-    <div class="container mt-6">
+                {# {% if video.type == 'youtube' %} #}
+                <iframe width="100%" height="250em" src="{{ 'https://www.youtube.com/embed/' ~ video.name }}" frameborder="0" allowfullscreen></iframe>
+                {# {% set url = 'https://www.youtube.com/watch?v=' ~ video.name %} #}
+                {# {% set url = 'https://www.dailymotion.com/video/' ~ video.name %} #}
+                {# {% set url = '' %} #}
+            </div>
+            {% endfor %}
+        </div>
+
+        {# <div class="owl-carousel"> #}
+        {# {% for video in trick.video %} #}
+        {# <div> #}
+        {# <iframe width="100%" height="250em" src="{{ 'https://www.youtube.com/embed/' ~ video.name }}" frameborder="0" allowfullscreen></iframe> #}
+        {# </div> #}
+        {# {% endfor %} #}
+        {# </div> #}
+
 
         <p>{{ trick.description }}</p>
         {{ include('component/_trick_edit_icons.html.twig') }}
@@ -82,6 +117,8 @@
 {% endblock %}
     {% block javascripts %}
         {{ parent() }}
+        <script src="{{ asset('owl/owl.carousel.min.js') }}"></script>
+
         <script>
             $(document).ready()
             {
@@ -98,39 +135,57 @@
                     e.preventDefault();
                     $modal.removeClass('is-active');
                 })
-            }
 
 
-            // * jquery/ajax to delete/edit comment in db and remove field
-            var $a = $("a[data-delete]");
+                // * jquery/ajax to delete/edit comment in db and remove field
+                var $a = $("a[data-delete]");
 
-            $a.click(function (e) {
-                e.preventDefault();
+                $a.click(function (e) {
+                    e.preventDefault();
 
-                var $a = $(this);
-                var token = $(this).attr("data-token");
-                var url = $(this).attr("href");
-                if (confirm("Sur ???")) {
+                    var $a = $(this);
+                    var token = $(this).attr("data-token");
+                    var url = $(this).attr("href");
+                    if (confirm("Sur ???")) {
 
-                    // fetch = requete (jusquau premier then)
-                    fetch(url, {
-                        method: "DELETE",
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest",
-                            "Content-Type": "application/json"
+                        // fetch = requete (jusquau premier then)
+                        fetch(url, {
+                            method: "DELETE",
+                            headers: {
+                                "X-Requested-With": "XMLHttpRequest",
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({"_token": token})
+                        }).then(
+                            //    recup la reponse json
+                            response => response.json()
+                        ).then(data => {
+                            // fais des choses avec la response
+                            if (data.success)
+                                $a.parent().parent().parent().parent().remove()
+                            else
+                                alert(data.error)
+                        }).catch(e => alert(e))
+                    }
+                })
+                $(".owl-carousel").owlCarousel({
+                    // items: 1,
+                    merge: false,
+                    // loop: true,
+                    margin: 10,
+                    // video: true,
+                    lazyLoad: true,
+                    // center: true,
+                    responsive: {
+                        480: {
+                            items: 2
                         },
-                        body: JSON.stringify({"_token": token})
-                    }).then(
-                        //    recup la reponse json
-                        response => response.json()
-                    ).then(data => {
-                        // fais des choses avec la response
-                        if (data.success)
-                            $a.parent().parent().parent().parent().remove()
-                        else
-                            alert(data.error)
-                    }).catch(e => alert(e))
-                }
-            })
+                        600: {
+                            items: 4
+                        }
+                    }
+                });
+
+            }
         </script>
     {% endblock %}
