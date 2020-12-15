@@ -18,53 +18,71 @@
         </div>
     </section>
 
-    <section class="hero">
+    <section class="hero ml-6 mr-6">
         <div class="owl-carousel">
             {% for image in trick.images %}
-                <div><img src="{{ asset('/uploads/' ~ image.name) }}" alt=""></div>
+                <div><a href="{{ '/uploads/' ~ image.name }}"><img src="{{ asset('/uploads/' ~ image.name) }}" alt=""></a></div>
+                {% dump(asset('/uploads/' ~ image.name)) %}
             {% endfor %}
         </div>
     </section>
-    <div class="container">
+    <div class="container is-fluid">
+        <div class="tabs is-centered">
+            <ul>
+                <li class="is-active" id="first-tab-button">
+                    <a>
+                        <span class="icon is-small"><i class="fas fa-snowboarding" aria-hidden="true"></i></span>
+                        <span>Description</span>
+                    </a>
+                </li>
+                <li id="second-tab-button">
+                    <a>
+                        <span class="icon is-small"><i class="fas fa-film" aria-hidden="true"></i></span>
+                        <span>Vidéos</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-        {# todo : maybe migrate this to another template and include (used in edit trick twig too)
+        <div id="trick-tab" class="mb-6">
+            <h1 class="title is-1 has-text-centered">{{ trick.title }}</h1>
+            <p class="mb-1">{{ trick.description }}</p>
+            {{ include('component/_trick_edit_icons.html.twig') }}
+        </div>
+        {# TAB 2 #}
+        <div id="trick-second-tab" class="mb-6" style="display: none">
+            {# todo : maybe migrate this to another template and include (used in edit trick twig too)
         and add a tab or something to not display videos or show/hide them
-        #}
-        <div class="columns">
-            {% for key, video in trick.video %}
-            {% if key % 2 == 0 %}
-        </div>
-        <div class="columns">
-            {% endif %}
-            <div class="column is-half">
-
-
-                {# {% if video.type == 'youtube' %} #}
-                <iframe width="100%" height="250em" src="{{ 'https://www.youtube.com/embed/' ~ video.name }}" frameborder="0" allowfullscreen></iframe>
-                {# {% set url = 'https://www.youtube.com/watch?v=' ~ video.name %} #}
-                {# {% set url = 'https://www.dailymotion.com/video/' ~ video.name %} #}
-                {# {% set url = '' %} #}
+            #}
+            <div class="columns">
+                {% for key, video in trick.video %}
+                {% if key % 2 == 0 %}
             </div>
-            {% endfor %}
+            <div class="columns">
+                {% endif %}
+                <div class="column is-half">
+
+
+                    {# {% if video.type == 'youtube' %} #}
+                    <iframe width="100%" height="250em" src="{{ 'https://www.youtube.com/embed/' ~ video.name }}" frameborder="0" allowfullscreen></iframe>
+                    {# {% set url = 'https://www.youtube.com/watch?v=' ~ video.name %} #}
+                    {# {% set url = 'https://www.dailymotion.com/video/' ~ video.name %} #}
+                    {# {% set url = '' %} #}
+                </div>
+                {% endfor %}
+            </div>
         </div>
 
-        {# <div class="owl-carousel"> #}
-        {# {% for video in trick.video %} #}
-        {# <div> #}
-        {# <iframe width="100%" height="250em" src="{{ 'https://www.youtube.com/embed/' ~ video.name }}" frameborder="0" allowfullscreen></iframe> #}
-        {# </div> #}
-        {# {% endfor %} #}
-        {# </div> #}
-
-
-        <p>{{ trick.description }}</p>
-        {{ include('component/_trick_edit_icons.html.twig') }}
 
         {% if is_granted('ROLE_USER') %}
-            <button class="button is-primary" id="comment-modal">Poster un commentaire</button>
+            <button class="button is-primary mb-2" id="comment-modal">Poster un commentaire</button>
         {% endif %}
         {% for comment in comments %}
+            {% if loop.last %}
+            <div class="box mb-3">
+            {% else%}
             <div class="box">
+            {% endif %}
                 <div class="message-body">
                     <div class="columns">
                         <div class="column is-one-fifth">
@@ -106,19 +124,11 @@
             </footer>
         </div>
     </div>
-
-
-    {# todo : lien edit/delete and back #}
-    {# <a href="{{ path('tricks_edit', {'id' : trick.id}) }}">edit the trick {{ trick.id }}</a> #}
-
-    {# <a href="{{ path('tricks_index') }}">back to list</a> #}
-
-    {# {{ include('tricks/_delete_form.html.twig') }} #}
 {% endblock %}
     {% block javascripts %}
         {{ parent() }}
         <script src="{{ asset('owl/owl.carousel.min.js') }}"></script>
-
+        <script src="{{ asset('js/img-video-form.js') }}"></script>
         <script>
             $(document).ready()
             {
