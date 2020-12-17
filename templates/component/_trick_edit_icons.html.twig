@@ -1,0 +1,10 @@
+{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and app.user.id == trick.author.id %}
+    <p class="block">
+        <a href="{{ path('tricks_edit', {'id': trick.id}) }}">
+            <i class="fas fa-edit is-primary"></i>
+        </a>
+        <a href="{{ path('tricks_delete', {'id': trick.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ trick.id) }}">
+            <i class="fas fa-trash-alt"></i>
+        </a>
+    </p>
+{% endif %}

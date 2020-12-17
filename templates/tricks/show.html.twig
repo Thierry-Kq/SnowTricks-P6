@@ -1,5 +1,10 @@
 {% extends 'base.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('owl/owl.theme.default.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('owl/owl.carousel.min.css') }}">
 
+{% endblock %}
 {% block title %}Tricks{% endblock %}
 
 {% block body %}
@@ -8,26 +13,76 @@
     {% set hero_subtitle = "" %}
     {{ include('component/_hero_trick_show.html.twig') }}
 
-    <section class="hero is-primary is-medium">
+    <section class="hero">
         <div class="hero-body">
-            <div class="container">
-                <h1 class="title">
-                    Barre video/images (caroussel?)
-                </h1>
-            </div>
         </div>
     </section>
 
+    <section class="hero ml-6 mr-6">
+        <div class="owl-carousel">
+            {% for image in trick.images %}
+                <div><a href="{{ '/uploads/' ~ image.name }}"><img src="{{ asset('/uploads/' ~ image.name) }}" alt=""></a></div>
+                {% dump(asset('/uploads/' ~ image.name)) %}
+            {% endfor %}
+        </div>
+    </section>
+    <div class="container is-fluid">
+        <div class="tabs is-centered">
+            <ul>
+                <li class="is-active" id="first-tab-button">
+                    <a>
+                        <span class="icon is-small"><i class="fas fa-snowboarding" aria-hidden="true"></i></span>
+                        <span>Description</span>
+                    </a>
+                </li>
+                <li id="second-tab-button">
+                    <a>
+                        <span class="icon is-small"><i class="fas fa-film" aria-hidden="true"></i></span>
+                        <span>Vidéos</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="trick-tab" class="mb-6">
+            <h1 class="title is-1 has-text-centered">{{ trick.title }}</h1>
+            <p class="mb-1">{{ trick.description }}</p>
+            {{ include('component/_trick_edit_icons.html.twig') }}
+        </div>
+        {# TAB 2 #}
+        <div id="trick-second-tab" class="mb-6" style="display: none">
+            {# todo : maybe migrate this to another template and include (used in edit trick twig too)
+        and add a tab or something to not display videos or show/hide them
+            #}
+            <div class="columns">
+                {% for key, video in trick.video %}
+                {% if key % 2 == 0 %}
+            </div>
+            <div class="columns">
+                {% endif %}
+                <div class="column is-half">
 
 
-    <div class="container mt-6">
+                    {# {% if video.type == 'youtube' %} #}
+                    <iframe width="100%" height="250em" src="{{ 'https://www.youtube.com/embed/' ~ video.name }}" frameborder="0" allowfullscreen></iframe>
+                    {# {% set url = 'https://www.youtube.com/watch?v=' ~ video.name %} #}
+                    {# {% set url = 'https://www.dailymotion.com/video/' ~ video.name %} #}
+                    {# {% set url = '' %} #}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
 
-        <p>{{ trick.description }}</p>
 
-        <button class="button is-primary" id="comment-modal">Poster un commentaire</button>
-
-        {% for comment in trick.comments %}
+        {% if is_granted('ROLE_USER') %}
+            <button class="button is-primary mb-2" id="comment-modal">Poster un commentaire</button>
+        {% endif %}
+        {% for comment in comments %}
+            {% if loop.last %}
+            <div class="box mb-3">
+            {% else%}
             <div class="box">
+            {% endif %}
                 <div class="message-body">
                     <div class="columns">
                         <div class="column is-one-fifth">
@@ -41,15 +96,8 @@
                             </figure>
                             <p class="mt-2">
                                 Par <strong>{{ comment.user.username }} </strong> <small>{{ comment.createdAt|format_date }}</small>
-                                {# todo : only if author || admin + edit ? #}
                             </p>
-
-                            <a href="{{ path('trick_comment_edit', {'id': comment.id}) }}">
-                                <i class="fas fa-edit is-primary edit-comment"></i>
-                            </a>
-                            <a href="{{ path('trick_comment_delete', {'id': comment.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ comment.id) }}">
-                                <i class="fas fa-trash-alt"></i>
-                            </a>
+                            {{ include('component/_comment_edit_icons.html.twig') }}
                         </div>
                         <div class="column">{{ comment.content }}</div>
                     </div>
@@ -57,6 +105,7 @@
             </div>
         {% endfor %}
     </div>
+    {{ include('component/_pagination.html.twig') }}
 
     <div class="modal new-com-modal">
         <div class="modal-background"></div>
@@ -75,17 +124,11 @@
             </footer>
         </div>
     </div>
-
-
-    {# todo : lien edit/delete and back #}
-    {# <a href="{{ path('tricks_edit', {'id' : trick.id}) }}">edit the trick {{ trick.id }}</a> #}
-
-    {# <a href="{{ path('tricks_index') }}">back to list</a> #}
-
-    {# {{ include('tricks/_delete_form.html.twig') }} #}
 {% endblock %}
     {% block javascripts %}
         {{ parent() }}
+        <script src="{{ asset('owl/owl.carousel.min.js') }}"></script>
+        <script src="{{ asset('js/img-video-form.js') }}"></script>
         <script>
             $(document).ready()
             {
@@ -102,39 +145,57 @@
                     e.preventDefault();
                     $modal.removeClass('is-active');
                 })
-            }
 
 
-            // * jquery/ajax to delete/edit comment in db and remove field
-            var $a = $("a[data-delete]");
+                // * jquery/ajax to delete/edit comment in db and remove field
+                var $a = $("a[data-delete]");
 
-            $a.click(function (e) {
-                e.preventDefault();
+                $a.click(function (e) {
+                    e.preventDefault();
 
-                var $a = $(this);
-                var token = $(this).attr("data-token");
-                var url = $(this).attr("href");
-                if (confirm("Sur ???")) {
+                    var $a = $(this);
+                    var token = $(this).attr("data-token");
+                    var url = $(this).attr("href");
+                    if (confirm("Sur ???")) {
 
-                    // fetch = requete (jusquau premier then)
-                    fetch(url, {
-                        method: "DELETE",
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest",
-                            "Content-Type": "application/json"
+                        // fetch = requete (jusquau premier then)
+                        fetch(url, {
+                            method: "DELETE",
+                            headers: {
+                                "X-Requested-With": "XMLHttpRequest",
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({"_token": token})
+                        }).then(
+                            //    recup la reponse json
+                            response => response.json()
+                        ).then(data => {
+                            // fais des choses avec la response
+                            if (data.success)
+                                $a.parent().parent().parent().parent().remove()
+                            else
+                                alert(data.error)
+                        }).catch(e => alert(e))
+                    }
+                })
+                $(".owl-carousel").owlCarousel({
+                    // items: 1,
+                    merge: false,
+                    // loop: true,
+                    margin: 10,
+                    // video: true,
+                    lazyLoad: true,
+                    // center: true,
+                    responsive: {
+                        480: {
+                            items: 2
                         },
-                        body: JSON.stringify({"_token": token})
-                    }).then(
-                        //    recup la reponse json
-                        response => response.json()
-                    ).then(data => {
-                        // fais des choses avec la response
-                        if (data.success)
-                            $a.parent().parent().parent().parent().remove()
-                        else
-                            alert(data.error)
-                    }).catch(e => alert(e))
-                }
-            })
+                        600: {
+                            items: 4
+                        }
+                    }
+                });
+
+            }
         </script>
     {% endblock %}

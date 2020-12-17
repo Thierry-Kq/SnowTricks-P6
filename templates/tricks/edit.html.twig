@@ -6,13 +6,8 @@
     {% set hero_title = "Edition" %}
     {% set hero_subtitle = "Page d'édition du Trick : ' " ~ trick.title ~ " '" %}
     {{ include('component/_hero_title.html.twig') }}
-    {# TODO : gerer autrement le app.user null / role_user maybe ? #}
-    {# * VOIR LIOR CHAMLA CHAPITRE 9.4 POUR ISGRANTED ET AUTHOR === #}
-    {# {{ include('security/deny.html.twig') }} #}
-    {# {{ include('tricks/_delete_form.html.twig') }} #}
 
-
-    <div class="container mt-6">
+    <div class="container is-fluid mt-6">
 
         <div class="tabs is-centered">
             <ul>

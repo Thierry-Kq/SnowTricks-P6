@@ -3,7 +3,7 @@
     {% set hero_title = "Dashboard" %}
     {% set hero_subtitle = "Bienvenue sur ton dashboard " ~ app.user.username %}
     {{ include('component/_hero_title.html.twig') }}
-    <div class="container">
+    <div class="container is-fluid">
 
         <div class="box mt-5">
             <article class="media">
@@ -50,7 +50,7 @@
                         </div>
                         <div class="buttons">
                             <button class="button is-primary" id="password-modal">Changez votre password</button>
-                            {{ include('security/_delete_form.html.twig') }}
+                            {{ include('security/_delete_account_form.html.twig') }}
                         </div>
                     </div>
                 </div>

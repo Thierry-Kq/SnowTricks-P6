@@ -11,7 +11,7 @@
  {% set img_source = trick.images[0] is defined ? asset('/uploads/' ~ trick.images[0].name) : asset('/img/home-bg2.jpg') %}
 
 
-<section class="hero is-medium custom-hero" style="background-image: url({{ img_source }})">
+<section class="hero is-fullheight custom-hero" style="background-image: url({{ img_source }})">
     <div class="hero-body">
         <div class="container">
             <h1 class="title my-title">{{ hero_title }}</h1>

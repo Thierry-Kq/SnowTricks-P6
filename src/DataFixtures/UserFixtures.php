@@ -60,10 +60,11 @@ class UserFixtures extends Fixture
         for ($trickNumber = 1; $trickNumber <= 10; $trickNumber++) {
             $videoCollection = $this->createYoutubeVideos();
 
+            $authorUser = $trickNumber % 2 === 0 ? $userFirst : $userThird;
             $trick = new Tricks();
             $trick->setTitle('Mon trick numéro ' . $trickNumber . ' !')
                 ->setDescription('Ma description de ce trick numéro ' . $trickNumber . ' !')
-                ->setAuthor($userThird);
+                ->setAuthor($authorUser);
             foreach ($videoCollection as $video) {
                 $trick->addVideo($video);
             }

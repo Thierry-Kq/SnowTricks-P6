@@ -5,21 +5,22 @@ namespace App\Controller;
 use App\Entity\Comment;
 use App\Entity\Images;
 use App\Entity\Tricks;
-use App\Entity\User;
 use App\Entity\Video;
 use App\Form\CommentType;
 use App\Form\TricksType;
+use App\Repository\CommentRepository;
 use App\Repository\TricksRepository;
 use App\Service\ImagesService;
 use App\Service\ToolsService;
 use App\Service\VideosService;
 use Doctrine\ORM\EntityManagerInterface;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 
 class TricksController extends AbstractController
@@ -29,32 +30,29 @@ class TricksController extends AbstractController
      */
     public function index(
         TricksRepository $tricksRepository,
-        PaginatorInterface $paginator,
         Request $request
     ): Response {
 
-        // todo : my own paginator coz no bundle
-        // paginator test
-        $data = $tricksRepository->getAllActivesTricks();
-//        $data = $tricksRepository->findAll();
-        $tricks = $paginator->paginate(
-            $data, // Requête contenant les données à paginer (ici nos articles)
-            $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
-            8
-        );
+        $limit = 8;
+        $page = $request->query->getInt('page', 1);
+        $page = $page === 0 ? 1 : $page;
+        $tricks = $tricksRepository->getPaginatedTricks($page, $limit);
+        $total = $tricksRepository->getTotalTricks();
 
-        // we set a custom template for the pagination_render
-        $tricks->setTemplate('component/_pagination.html.twig');
 
         return $this->render(
             'tricks/index.html.twig',
             [
                 'tricks' => $tricks,
+                'total' => $total,
+                'limit' => $limit,
+                'page' => $page,
             ]
         );
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/tricks/new", name="tricks_new", methods={"GET","POST"})
      */
     public function new(
@@ -63,16 +61,13 @@ class TricksController extends AbstractController
         ImagesService $imagesService,
         VideosService $videosService
     ) {
-        $user = $this->getUser();
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
         $trick = new Tricks();
         $form = $this->createForm(TricksType::class, $trick);
-        $trick->setAuthor($user);
 
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->getUser();
+            $trick->setAuthor($user);
 
             // get images here
             $images = $form->get('images')->getData();
@@ -80,7 +75,6 @@ class TricksController extends AbstractController
             foreach ($images as $image) {
                 $imagesService->addImages($image, $trick, $this->getParameter('images_directory'));
             }
-
             $videos = $form->get('videos')->getData();
             foreach (array_filter($videos) as $video) {
                 $videosService->addVideoTick($trick, array_filter($video));
@@ -106,7 +100,8 @@ class TricksController extends AbstractController
     public function show(
         Request $request,
         EntityManagerInterface $entityManager,
-        Tricks $trick
+        Tricks $trick,
+        CommentRepository $commentRepository
     ): Response {
 
         $comment = new Comment();
@@ -122,16 +117,27 @@ class TricksController extends AbstractController
             $entityManager->flush();
         }
 
+        $limit = 6;
+        $page = $request->query->getInt('page', 1);
+        $page = $page === 0 ? 1 : $page;
+        $comments = $commentRepository->getPaginatedComments($page, $limit, $trick->getId());
+        $total = $commentRepository->getTotalCommentsByOneTrick($trick->getId());
+
         return $this->render(
             'tricks/show.html.twig',
             [
                 'trick' => $trick,
                 'form' => $form->createView(),
+                'limit' => $limit,
+                'page' => $page,
+                'comments' => $comments,
+                'total' => $total,
             ]
         );
     }
 
     /**
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and trick.getAuthor() === user")
      * @Route("/tricks/{id}/edit", name="tricks_edit", methods={"GET","POST"})
      */
     public function edit(
@@ -145,13 +151,6 @@ class TricksController extends AbstractController
 
         $form = $this->createForm(TricksType::class, $trick);
         $form->handleRequest($request);
-
-//        $user = $this->getUser();
-        // if not logged = bug
-        // deny access if not author or admin
-//        if ($user->getId() != $trick->getAuthor()->getId()) {
-//            $this->denyAccessUnlessGranted('ROLE_ADMIN');
-//        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             // get images here
@@ -187,27 +186,37 @@ class TricksController extends AbstractController
     }
 
     /**
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and trick.getAuthor() === user")
      * @Route("/tricks/{id}", name="tricks_delete", methods={"DELETE"})
      */
-    public function delete(Request $request, Tricks $trick): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $trick->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+    public function delete(
+        Request $request,
+        Tricks $trick,
+        EntityManagerInterface $entityManager
+    ): Response {
 
+        $data = json_decode($request->getContent(), true);
+        if ($this->isCsrfTokenValid('delete' . $trick->getId(), $data['_token'])) {
             foreach ($trick->getImages() as $img) {
                 $nom = $img->getName();
-                unlink($this->getParameter('images_directory') . '/' . $nom); // supprime le fichier dans uploads
+                if ($nom != 'placeholder.png') { // dont remove img placeholder from fixtures
+                    unlink($this->getParameter('images_directory') . '/' . $nom); // supprime le fichier dans uploads
+                }
                 $trick->removeImage($img); // supprime le trickId dans image
                 // les images seront delete en base car orphanRemoval=true dans la relation Tricks->Images
             }
             $entityManager->remove($trick);
             $entityManager->flush();
+
+            // on repond en json
+            return new JsonResponse(['success' => 1]);
         }
 
-        return $this->redirectToRoute('tricks_index');
+        return new JsonResponse(['error' => 'Token Invalide'], 400);
     }
 
     /**
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')")
      * @Route("/tricks/delete/image/{id}", name="tricks_image_delete", methods={"DELETE"})
      */
     public function deleteImage(
@@ -216,7 +225,6 @@ class TricksController extends AbstractController
         ImagesService $imagesService
     ) {
         $data = json_decode($request->getContent(), true);
-
         if ($this->isCsrfTokenValid('delete' . $image->getId(), $data['_token'])) {
             $imagesService->deleteImage($image, $this->getParameter('images_directory') . '/' . $image->getName());
 
@@ -228,6 +236,7 @@ class TricksController extends AbstractController
     }
 
     /**
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and trick.getAuthor() === user")
      * @Route("/tricks/delete/video/{id}", name="tricks_video_delete", methods={"DELETE"})
      */
     public function deleteVideo(
@@ -248,10 +257,8 @@ class TricksController extends AbstractController
         return new JsonResponse(['error' => 'Token Invalide'], 400);
     }
 
-
-//    TODO : test if i can edit with url, no button (csrfToken ??)
-// TODO : recup user courant et verif si il est owner du trick
     /**
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and trick.getAuthor() === user")
      * @Route("/tricks/{id}/edit-slug", name="edit_slug")
      */
     public function editSlug(

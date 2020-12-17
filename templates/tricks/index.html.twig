@@ -5,7 +5,7 @@
 {% block body %}
 
 
-    {% set hero_title = "Dashboard" %}
+    {% set hero_title = "" %}
     {% set hero_subtitle = "" %}
     {{ include('component/_hero_homepage.html.twig') }}
 
@@ -44,20 +44,55 @@
                             </p>
 
                             <p class="block">
-                                {# TODO : created ou updated pour les tricks #}
-                                <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+                                {{ trick.createdAt|format_date }}
                             </p>
-
-                            <p class="block">
-                                {# todo : only if author || admin + link to delete #}
-                                <a href="{{ path('tricks_edit', {'id': trick.id}) }}"><i class="fas fa-edit is-primary"></i></a>
-                                <i class="fas fa-trash-alt"></i>
-                            </p>
+                            {{ include('component/_trick_edit_icons.html.twig') }}
                         </div>
                     </div>
                 </div>
             </div>
         {% endfor %}
     </div>
-    {{ knp_pagination_render(tricks) }}
+    {{ include('component/_pagination.html.twig') }}
+
 {% endblock %}
+
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+            $(document).ready()
+            {
+                var $a = $("a[data-delete]");
+
+                $a.click(function (e) {
+                    e.preventDefault();
+
+                    var $a = $(this);
+                    var token = $(this).attr("data-token");
+                    var url = $(this).attr("href");
+                    console.log($a, url, token)
+                    if (confirm("Sur ???")) {
+
+                        // fetch = requete (jusquau premier then)
+                        fetch(url, {
+                            method: "DELETE",
+                            headers: {
+                                "X-Requested-With": "XMLHttpRequest",
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({"_token": token})
+                        }).then(
+                            //    recup la reponse json
+                            response => response.json()
+                        ).then(data => {
+                            // fais des choses avec la response
+                            if (data.success)
+                                $a.parent().parent().parent().parent().parent().remove()
+                            else
+                                alert(data.error)
+                        }).catch(e => alert(e))
+                    }
+                })
+            }
+        </script>
+    {% endblock %}

@@ -12,11 +12,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class CommentsController extends AbstractController
 {
     /**
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and comment.getUser() === user")
      * @Route("/comment/{id}/delete", name="trick_comment_delete", methods={"DELETE"})
      */
     public function deleteComment(
@@ -38,6 +40,7 @@ class CommentsController extends AbstractController
     }
 
     /**
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and comment.getUser() === user")
      * @Route("/comment/{id}/edit", name="trick_comment_edit")
      */
     public function editComment(
@@ -49,21 +52,28 @@ class CommentsController extends AbstractController
 
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
+        $trick = $comment->getTrick();
         if ($this->getUser() && $form->isSubmitted() && $form->isValid()) {
 
-            $trick = $comment->getTrick();
             $entityManager->persist($comment);
             $entityManager->flush();
 
             return $this->redirectToRoute('tricks_show', ['id' => $trick->getId(), 'slug' => $trick->getSlug()]);
         }
 
+        $trickUrl = $this->generateUrl(
+            'tricks_show',
+            [
+                'id' => $trick->getId(),
+                'slug' => $trick->getSlug(),
+            ]
+        );
+
         return $this->render(
             'tricks/edit_comment.html.twig',
             [
-                'trick' => $comment->getTrick()->getId(),
+                'trickUrl' => $trickUrl,
                 'form' => $form->createView(),
-//                'formEdit' => $form->createView(),
             ]
         );
     }

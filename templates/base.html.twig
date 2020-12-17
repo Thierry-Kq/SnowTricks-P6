@@ -23,6 +23,24 @@
     {{ include('component/_footer.html.twig') }}
 {% endblock %}
 
-{% block javascripts %} {{ encore_entry_script_tags('app') }}{% endblock %}
+{% block javascripts %} {{ encore_entry_script_tags('app') }}
+    <script>
+        $(document).ready()
+        {
+            var $burger = $('#burger'),
+                $navbar = $('#navbarBasicExample');
+
+            $($burger).click(function () {
+                if ($navbar.attr("class") === 'navbar-menu') {
+                    $($navbar).addClass('is-active');
+                } else {
+                    $($navbar).removeClass('is-active');
+                }
+                console.log($navbar.attr("class"));
+            })
+        }
+    </script>
+
+{% endblock %}
 </body>
 </html>

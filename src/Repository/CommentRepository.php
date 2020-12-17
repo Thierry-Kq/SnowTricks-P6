@@ -19,32 +19,25 @@ class CommentRepository extends ServiceEntityRepository
         parent::__construct($registry, Comment::class);
     }
 
-    // /**
-    //  * @return Comment[] Returns an array of Comment objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function getPaginatedComments($page, $limit, $trickId)
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $query = $this->createQueryBuilder('c')
+            ->where('c.trick = :trickId')
+            ->setParameter(':trickId', $trickId)
+            ->orderBy('c.createdAt', 'DESC')
+            ->setFirstResult(($page * $limit) - $limit)
+            ->setMaxResults($limit);
 
-    /*
-    public function findOneBySomeField($value): ?Comment
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return $query->getQuery()->getResult();
     }
-    */
+
+    public function getTotalCommentsByOneTrick($trickId)
+    {
+        $query = $this->createQueryBuilder('c')
+            ->where('c.trick = :trickId')
+            ->setParameter(':trickId', $trickId)
+            ->select('COUNT(c)');
+
+        return $query->getQuery()->getSingleScalarResult();
+    }
 }

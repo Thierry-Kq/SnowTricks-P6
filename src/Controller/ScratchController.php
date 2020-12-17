@@ -22,4 +22,12 @@ class ScratchController extends AbstractController
     {
         return $this->render('scratch/conditions.html.twig');
     }
+
+    /**
+     * @Route("/carousel", name="carousel")
+     */
+    public function carousel()
+    {
+        return $this->render('scratch/carousel.html.twig');
+    }
 }
