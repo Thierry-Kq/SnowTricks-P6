@@ -129,17 +129,17 @@
             $(document).ready()
             {
                 var $button = $("#password-modal"),
-                    $modale = $(".modal"),
+                    $modal = $(".modal"),
                     $cancelButton = $("#cancel-modal");
 
                 $button.click(function (e) {
                     e.preventDefault();
-                    $modale.addClass('is-active');
+                    $modal.addClass('is-active');
                 })
 
                 $cancelButton.click(function (e) {
                     e.preventDefault();
-                    $modale.removeClass('is-active');
+                    $modal.removeClass('is-active');
                 })
             }
         </script>

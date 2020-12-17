@@ -17,57 +17,124 @@
             </div>
         </div>
     </section>
+
+
+
     <div class="container mt-6">
+
         <p>{{ trick.description }}</p>
+
+        <button class="button is-primary" id="comment-modal">Poster un commentaire</button>
+
+        {% for comment in trick.comments %}
+            <div class="box">
+                <div class="message-body">
+                    <div class="columns">
+                        <div class="column is-one-fifth">
+                            <figure class="image is-128x128">
+                                {% if comment.user.image is not null %}
+                                    {% set image_source = asset('/uploads/' ~ comment.user.image.name) %}
+                                {% else %}
+                                    {% set image_source = asset('/img/unknow.jpg') %}
+                                {% endif %}
+                                <img class="" src="{{ image_source }}" alt="Image">
+                            </figure>
+                            <p class="mt-2">
+                                Par <strong>{{ comment.user.username }} </strong> <small>{{ comment.createdAt|format_date }}</small>
+                                {# todo : only if author || admin + edit ? #}
+                            </p>
+
+                            <a href="{{ path('trick_comment_edit', {'id': comment.id}) }}">
+                                <i class="fas fa-edit is-primary edit-comment"></i>
+                            </a>
+                            <a href="{{ path('trick_comment_delete', {'id': comment.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ comment.id) }}">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </div>
+                        <div class="column">{{ comment.content }}</div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
-    {# {{ dump(trick) }} #}
+
+    <div class="modal new-com-modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Poster un commentaire</p>
+            </header>
+            <section class="modal-card-body">
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-primary">Enregistrer</button>
+                <button class="button is-link cancel-modal" id="cancel-modal">Annuler</button>
+                {{ form_end(form) }}
+            </footer>
+        </div>
+    </div>
 
 
-
-    {# <div class="debug"> #}
-    {# {% if app.user and app.user.id == trick.author.id %} #}
-    {# <h1 class="debug-title">PROPRIO</h1> #}
-    {# <p>proprietaire de cet article, tu peux edit</p> #}
+    {# todo : lien edit/delete and back #}
     {# <a href="{{ path('tricks_edit', {'id' : trick.id}) }}">edit the trick {{ trick.id }}</a> #}
-    {# {% elseif is_granted('ROLE_ADMIN') %} #}
-    {# <p>cet article nest pas a toi mais t'es admin donc ok</p> #}
-    {# <a href="{{ path('tricks_edit', {'id' : trick.id}) }}">edit the trick {{ trick.id }}</a> #}
-    {# {% else %} #}
-    {# <h1 class="debug-title">PROPRIO</h1> #}
-    {# <p>cet article nest pas a toi tu peux pas edit</p> #}
-    {# {% endif %} #}
-    {# </div> #}
-
-    {# <h1>Tricks</h1> #}
-
-    {# <table class="table"> #}
-    {# <tbody> #}
-    {# <tr> #}
-    {# <th>Id</th> #}
-    {# <td>{{ trick.id }}</td> #}
-    {# </tr> #}
-    {# <tr> #}
-    {# <th>Title</th> #}
-    {# <td>{{ trick.title }}</td> #}
-    {# </tr> #}
-    {# <tr> #}
-    {# <th>Description</th> #}
-    {# <td>{{ trick.description }}</td> #}
-    {# </tr> #}
-    {# <tr> #}
-    {# <th>Nbr Images</th> #}
-    {# <td>{{ trick.images|length }}</td> #}
-    {# </tr> #}
-    {# <tr> #}
-    {# <th>Nbr Videos</th> #}
-    {# <td>{{ trick.video|length }}</td> #}
-    {# </tr> #}
-    {# </tbody> #}
-    {# </table> #}
 
     {# <a href="{{ path('tricks_index') }}">back to list</a> #}
 
-    {# <a href="{{ path('tricks_edit', {'id': trick.id}) }}">edit</a> #}
-
     {# {{ include('tricks/_delete_form.html.twig') }} #}
 {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+            $(document).ready()
+            {
+                var $button = $("#comment-modal"),
+                    $modal = $(".new-com-modal"),
+                    $cancelButton = $(".cancel-modal");
+
+                $button.click(function (e) {
+                    e.preventDefault();
+                    $modal.addClass('is-active');
+                })
+
+                $cancelButton.click(function (e) {
+                    e.preventDefault();
+                    $modal.removeClass('is-active');
+                })
+            }
+
+
+            // * jquery/ajax to delete/edit comment in db and remove field
+            var $a = $("a[data-delete]");
+
+            $a.click(function (e) {
+                e.preventDefault();
+
+                var $a = $(this);
+                var token = $(this).attr("data-token");
+                var url = $(this).attr("href");
+                if (confirm("Sur ???")) {
+
+                    // fetch = requete (jusquau premier then)
+                    fetch(url, {
+                        method: "DELETE",
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest",
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({"_token": token})
+                    }).then(
+                        //    recup la reponse json
+                        response => response.json()
+                    ).then(data => {
+                        // fais des choses avec la response
+                        if (data.success)
+                            $a.parent().parent().parent().parent().remove()
+                        else
+                            alert(data.error)
+                    }).catch(e => alert(e))
+                }
+            })
+        </script>
+    {% endblock %}

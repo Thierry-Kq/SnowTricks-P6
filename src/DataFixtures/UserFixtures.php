@@ -2,8 +2,8 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Comment;
 use App\Entity\Images;
-use App\Entity\Trick;
 use App\Entity\Tricks;
 use App\Entity\User;
 use App\Entity\Video;
@@ -31,42 +31,58 @@ class UserFixtures extends Fixture
 
     public function load(ObjectManager $manager)
     {
+//        $users = [];
 
-        $videoCollection = $this->createYoutubeVideos();
-
-        $user = new User();
-        $user->setUsername('SnowTricks')
+        $userFirst = new User();
+        $userFirst->setUsername('SnowTricks')
             ->setEmail('azerty@azerty.com')
-            ->setPassword($this->passwordEncoder->encodePassword($user, 'azerty'))
+            ->setPassword($this->passwordEncoder->encodePassword($userFirst, 'azerty'))
             ->setRoles(['ROLE_ADMIN']);
-        $this->manager->persist($user);
+        $this->manager->persist($userFirst);
+//        $users[] = [$userFirst];
 
-        $user = new User();
-        $user->setUsername('Kasskq')
+        $userSecond = new User();
+        $userSecond->setUsername('Kasskq')
             ->setEmail('kasskq@gmail.com')
-            ->setPassword($this->passwordEncoder->encodePassword($user, 'azerty'))
+            ->setPassword($this->passwordEncoder->encodePassword($userSecond, 'azerty'))
             ->setRoles(['ROLE_ADMIN']);
-        $this->manager->persist($user);
+        $this->manager->persist($userSecond);
+//        $users[] = [$userSecond];
 
-        $user = new User();
-        $user->setUsername('Kasska')
+        $userThird = new User();
+        $userThird->setUsername('Kasska')
             ->setEmail('azerty@gmail.com')
-            ->setPassword($this->passwordEncoder->encodePassword($user, 'azerty'));
-        $this->manager->persist($user);
+            ->setPassword($this->passwordEncoder->encodePassword($userThird, 'azerty'));
+        $this->manager->persist($userThird);
+//        $users[] = [$userThird];
 
 
         for ($trickNumber = 1; $trickNumber <= 10; $trickNumber++) {
+            $videoCollection = $this->createYoutubeVideos();
+
             $trick = new Tricks();
             $trick->setTitle('Mon trick numéro ' . $trickNumber . ' !')
                 ->setDescription('Ma description de ce trick numéro ' . $trickNumber . ' !')
-                ->setAuthor($user);
+                ->setAuthor($userThird);
             foreach ($videoCollection as $video) {
                 $trick->addVideo($video);
             }
-            $this->manager->persist($trick);
+            for ($commentNumber = 1; $commentNumber <= 10; $commentNumber++) {
+
+                $comment = new Comment();
+                $comment->setContent('Voici mon commentaire n° ' . $commentNumber . ' pour le trick n° ' . $trickNumber);
+
+                $randomUser = ($commentNumber % 2 === 0) ? $userSecond : $userThird;
+                $comment->setUser($randomUser);
+                $comment->setTrick($trick);
+
+                $this->manager->persist($trick);
+                $this->manager->persist($comment);
+                $this->manager->flush();
+            }
+
             $this->addPlaceholerImage($trick);
         }
-
     }
 
     public function createYoutubeVideos()

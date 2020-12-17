@@ -1,14 +1,4 @@
-{# <div class="block"> #}
-{# <div class="custom-hero"> #}
-{# <img src="{{ asset('/img/home-bg2.jpg') }}" alt="" class="banner-image"> #}
-{# <div class="banner-content"> #}
-{# <h1 class="title is-1"></h1> #}
-{# </div> #}
-{# </div> #}
-{# </div> #}
-
-
-<section class="hero is-fullheight-with-navbar custom-hero">
+<section class="hero is-fullheight custom-hero">
     <div class="hero-body">
         <div class="container">
             <h1 class="title">{{ hero_title }}</h1>
@@ -31,15 +21,6 @@
         background-image: url("{{ asset('/img/home-bg2.jpg') }}");
     }
 
-    {#.second-custom-hero {#}
-
-    {#    background-position: center center;#}
-    {#    background-repeat: no-repeat;#}
-    {#    background-attachment: fixed;#}
-    {#    background-size: cover;#}
-    {#    background-color: #999;#}
-    {#    background-image: url("{{ asset('/img/home-bg.jpg') }}");#}
-    {#}#}
 </style>
 <script>
     $(document).ready(function () {
@@ -50,5 +31,4 @@
             $('html,body').animate({scrollTop: $trickListaTag.offset().top}, 'slow');
         })
     })
-    // top_tricks
 </script>
