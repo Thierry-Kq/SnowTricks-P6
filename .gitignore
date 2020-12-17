@@ -17,7 +17,7 @@
 
 
 .idea
-#.env
+.env
 .env.test
 /public/uploads
 ###> symfony/webpack-encore-bundle ###
