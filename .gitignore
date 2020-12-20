@@ -16,6 +16,6 @@
 
 
 .idea
-.env
+#.env
 .env.test
 /public/uploads
