@@ -22,7 +22,6 @@
         <div class="owl-carousel">
             {% for image in trick.images %}
                 <div><a href="{{ '/uploads/' ~ image.name }}"><img src="{{ asset('/uploads/' ~ image.name) }}" alt=""></a></div>
-                {% dump(asset('/uploads/' ~ image.name)) %}
             {% endfor %}
         </div>
     </section>
