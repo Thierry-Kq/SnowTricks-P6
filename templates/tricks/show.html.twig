@@ -25,7 +25,7 @@
             {% endfor %}
         </div>
     </section>
-    <div class="container">
+    <div class="container is-fluid">
         <div class="tabs is-centered">
             <ul>
                 <li class="is-active" id="first-tab-button">
@@ -49,7 +49,7 @@
             {{ include('component/_trick_edit_icons.html.twig') }}
         </div>
         {# TAB 2 #}
-        <div id="trick-second-tab" class="mb-6" style="display: none">
+        <div id="trick-second-tab" class="mb-6 ml-6 mr-6" style="display: none">
             {# todo : maybe migrate this to another template and include (used in edit trick twig too)
         and add a tab or something to not display videos or show/hide them
             #}

@@ -2,13 +2,14 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Welcome!{% endblock %}</title>
     {% block stylesheets %}
         <script src="https://kit.fontawesome.com/ddc5167d15.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
         {# {{ encore_entry_link_tags('app') }} #}
         {# {{ encore_entry_link_tags('Bulma') }} #}
-        {# <link rel="stylesheet" href="{{ asset('/css/debug.css') }}" crossorigin="anonymous"> #}
+        <link rel="stylesheet" href="{{ asset('/css/custom-css.css') }}" crossorigin="anonymous">
         {# <link rel="stylesheet" href="{{ asset('/css/Bulma-app-test.css') }}" crossorigin="anonymous"> #}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>

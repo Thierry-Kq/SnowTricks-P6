@@ -42,6 +42,7 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
+            // TODO : constraint uniq name trick
             // TODO ATTENTION ! ERROR SI LE MAIL 'does not comply with addr-spec of RFC 2822.' par exemple eazezae (pas de @.com)
             $email = (new Email())
                 ->from('noreply@snowtricks.com')
