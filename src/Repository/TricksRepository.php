@@ -37,7 +37,6 @@ class TricksRepository extends ServiceEntityRepository
         return $query->getQuery()->getSingleScalarResult();
     }
 
-//    todo : check and optimize all request
     public function getAllActivesTricks()
     {
         return $this->createQueryBuilder('t')

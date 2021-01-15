@@ -5,9 +5,7 @@
             <h2 class="subtitle">{{ hero_subtitle }}</h2>
         </div>
     </div>
-    {# todo positionner ce button, deplacer le js ?, faire le lien pour remonter en haut
-    #}
-    <span style="font-size: 3em;"> <a id="go_tricks" href="#"><i class="fas fa-angle-double-down"></i></a></span>
+
 
 </section>
 <style>
@@ -22,13 +20,3 @@
     }
 
 </style>
-<script>
-    $(document).ready(function () {
-        var $buttonToTricks = $('#go_tricks'),
-            $trickListaTag = $('#top_tricks');
-
-        $buttonToTricks.click(function (e) {
-            $('html,body').animate({scrollTop: $trickListaTag.offset().top}, 'slow');
-        })
-    })
-</script>

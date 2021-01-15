@@ -13,7 +13,6 @@
         <div class="box mt-5">
             <article class="media">
 
-                {# TODO : rendre innacessible /login if logged, flash error if error #}
                 <form method="post">
                     {% if error %}
                         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
