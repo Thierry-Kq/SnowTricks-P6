@@ -1,0 +1,16 @@
+h1 {
+    /*color: rebeccapurple;*/
+}
+
+
+@media (max-width: 1280px ) {
+
+    .container {
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+
+    .hide-mobile {
+        display: none;
+    }
+}

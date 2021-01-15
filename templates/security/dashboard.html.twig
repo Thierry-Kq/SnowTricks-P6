@@ -56,9 +56,10 @@
                 </div>
             </article>
         </div>
+        <span class="hide-mobile">
 
-
-        <table class="table is-striped is-hoverable is-fullwidth">
+        {% if app.user.tricks is defined and app.user.tricks is not null %}
+            <table class="table is-striped is-hoverable is-fullwidth">
             <thead>
             <tr>
                 <th>Titre</th>
@@ -83,7 +84,6 @@
             </tfoot>
             <tbody>
 
-
             {% for trick in app.user.tricks %}
                 <tr>
                     <th>{{ trick.title }}</th>
@@ -102,6 +102,10 @@
 
             </tbody>
         </table>
+        {% endif %}
+
+        </span>
+
     </div>
 
     <div class="modal">
