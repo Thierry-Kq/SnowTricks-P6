@@ -13,7 +13,6 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 
 class RegistrationController extends AbstractController
 {
@@ -53,6 +52,7 @@ class RegistrationController extends AbstractController
 
             $mailer->send($email);
 
+//            todo : delete all redirect homepage
             return $this->redirectToRoute('homepage');
         }
 

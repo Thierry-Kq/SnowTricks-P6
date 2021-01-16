@@ -6,14 +6,12 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Form\CommentType;
-use App\Service\ToolsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class CommentsController extends AbstractController
 {
