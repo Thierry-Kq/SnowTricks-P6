@@ -52,7 +52,7 @@ $(document).ready(function () {
             // alert(url);
         }
     })
-    // TODO UGLY !! REFACTO THIS !!
+    // UGLY !! REFACTO THIS !!
     var $firstTab = $('#trick-tab'),
         $secondTab = $('#trick-second-tab'),
         $thirdTab = $('#trick-third-tab'),

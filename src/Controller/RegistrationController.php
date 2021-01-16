@@ -41,8 +41,6 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // TODO : constraint uniq name trick
-            // TODO ATTENTION ! ERROR SI LE MAIL 'does not comply with addr-spec of RFC 2822.' par exemple eazezae (pas de @.com)
             $email = (new Email())
                 ->from('noreply@snowtricks.com')
                 ->to($user->getEmail())
@@ -52,7 +50,6 @@ class RegistrationController extends AbstractController
 
             $mailer->send($email);
 
-//            todo : delete all redirect homepage
             return $this->redirectToRoute('tricks_index');
         }
 
@@ -75,12 +72,7 @@ class RegistrationController extends AbstractController
         $user = $userRepository->findOneBy(['activationToken' => $token]);
 
         if (!$user) {
-            $this->addFlash(
-                'notice',
-                'Not Found'
-            );
-//            throw new CustomUserMessageAuthenticationException('Username could not be found.');
-            // TODO : 404 ?
+            //
         } else {
             $user->setActivationToken(null);
             $entityManager->persist($user);
