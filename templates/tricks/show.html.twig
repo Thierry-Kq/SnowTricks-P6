@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{{ asset('owl/owl.carousel.min.css') }}">
 
 {% endblock %}
-{% block title %}Tricks{% endblock %}
+{% block title %}Voir le détail d'un Trick{% endblock %}
 
 {% block body %}
 
@@ -50,9 +50,7 @@
         </div>
         {# TAB 2 #}
         <div id="trick-second-tab" class="mb-6 ml-6 mr-6" style="display: none">
-            {# todo : maybe migrate this to another template and include (used in edit trick twig too)
-        and add a tab or something to not display videos or show/hide them
-            #}
+
             <div class="columns">
                 {% for key, video in trick.video %}
                 {% if key % 2 == 0 %}

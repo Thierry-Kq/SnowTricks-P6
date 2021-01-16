@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Inscription{% endblock %}
 
 {% block body %}
 
@@ -17,10 +17,6 @@
                         You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
                     </div>
                 {% endif %}
-                {# TODO : gerer erreur du form #}
-                {# {% for flashError in app.flashes('verify_email_error') %} #}
-                {# <div class="alert alert-danger" role="alert">{{ flashError }}</div> #}
-                {# {% endfor %} #}
                 <div class="field">
                     <label class="label">Username</label>
                     <div class="control">

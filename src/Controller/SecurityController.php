@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Images;
 use App\Entity\User;
 use App\Form\ChangePasswordType;
 use App\Form\UserType;
@@ -17,7 +16,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class SecurityController extends AbstractController
 {
@@ -122,6 +120,6 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('app_logout');
         }
 
-        return $this->redirectToRoute('homepage');
+        return $this->redirectToRoute('tricks_index');
     }
 }

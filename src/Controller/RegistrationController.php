@@ -13,7 +13,6 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 
 class RegistrationController extends AbstractController
 {
@@ -42,8 +41,6 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // TODO : constraint uniq name trick
-            // TODO ATTENTION ! ERROR SI LE MAIL 'does not comply with addr-spec of RFC 2822.' par exemple eazezae (pas de @.com)
             $email = (new Email())
                 ->from('noreply@snowtricks.com')
                 ->to($user->getEmail())
@@ -53,7 +50,7 @@ class RegistrationController extends AbstractController
 
             $mailer->send($email);
 
-            return $this->redirectToRoute('homepage');
+            return $this->redirectToRoute('tricks_index');
         }
 
         return $this->render(
@@ -75,18 +72,13 @@ class RegistrationController extends AbstractController
         $user = $userRepository->findOneBy(['activationToken' => $token]);
 
         if (!$user) {
-            $this->addFlash(
-                'notice',
-                'Not Found'
-            );
-//            throw new CustomUserMessageAuthenticationException('Username could not be found.');
-            // TODO : 404 ?
+            //
         } else {
             $user->setActivationToken(null);
             $entityManager->persist($user);
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('homepage');
+        return $this->redirectToRoute('tricks_index');
     }
 }

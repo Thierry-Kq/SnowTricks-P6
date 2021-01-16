@@ -6,12 +6,15 @@ use App\Repository\TricksRepository;
 use App\Service\ToolsService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 
 /**
  * @ORM\Entity(repositoryClass=TricksRepository::class)
  * @HasLifecycleCallbacks
+ * @UniqueEntity(fields={"title"}, message="There is already a Trick with this name")
  */
 class Tricks
 {

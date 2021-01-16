@@ -49,7 +49,7 @@ class VideosService
             $urlParams = $this->videoRegex($video);
 
             if ($urlParams === null) {
-                // todo : what to do if wrong link?
+                //
             } else {
                 $videoTitle = $urlParams['videoTitle'];
                 $videoType = $urlParams['videoType'];
