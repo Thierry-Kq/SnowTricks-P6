@@ -53,7 +53,7 @@ class RegistrationController extends AbstractController
             $mailer->send($email);
 
 //            todo : delete all redirect homepage
-            return $this->redirectToRoute('homepage');
+            return $this->redirectToRoute('tricks_index');
         }
 
         return $this->render(
@@ -87,6 +87,6 @@ class RegistrationController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('homepage');
+        return $this->redirectToRoute('tricks_index');
     }
 }

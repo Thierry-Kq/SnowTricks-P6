@@ -120,6 +120,6 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('app_logout');
         }
 
-        return $this->redirectToRoute('homepage');
+        return $this->redirectToRoute('tricks_index');
     }
 }
