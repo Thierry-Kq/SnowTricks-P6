@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 /**
  * @ORM\Entity(repositoryClass=TricksRepository::class)
  * @HasLifecycleCallbacks
- * @UniqueEntity(fields={"title"}, message="There is already a Trick with this name")
+ * @UniqueEntity(fields={"title"}, message="Il y a déja un Trick avec ce titre")
  */
 class Tricks
 {
@@ -27,11 +27,13 @@ class Tricks
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le titre ne peut pas être vide")
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank(message="La description ne peut pas être vide")
      */
     private $description;
 

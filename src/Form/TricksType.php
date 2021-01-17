@@ -16,8 +16,8 @@ class TricksType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', TextType::class, ['attr' => ['class' => 'input is-primary', 'placeholder' => 'Alex Smith']])
-            ->add('description', TextareaType::class, ['attr' => ['class' => 'input is-primary', 'placeholder' => 'Alex Smith']])
+            ->add('title', TextType::class, ['attr' => ['class' => 'input is-primary', 'placeholder' => 'Alex Smith'], 'required' => false])
+            ->add('description', TextareaType::class, ['attr' => ['class' => 'input is-primary', 'placeholder' => 'Alex Smith'], 'required' => false])
             ->add(
                 'images', // pas lié a la bdd
                 FileType::class,
