@@ -9,6 +9,17 @@
 
     <div class="container mt-6">
 
+        {% for message in app.flashes('notice') %}
+            <article class="message is-link">
+                <div class="message-body">
+                    {{ message }}
+
+                </div>
+            </article>
+        {% endfor %}
+
+
+
         {{ include('tricks/_form.html.twig') }}
 
     </div>

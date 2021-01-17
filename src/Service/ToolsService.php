@@ -17,7 +17,8 @@ class ToolsService
         if ($params) { // use UnicodeString to remove the 'q=' and then slug the string
             return $slugger->slug(u($params)->after('q=')->lower());
         }
-
-        return $slugger->slug(u($tricks->getTitle())->lower());
+        if ($tricks->getDescription() !== null && $tricks->getTitle() !== null) {
+            return $slugger->slug(u($tricks->getTitle())->lower());
+        }
     }
 }

@@ -83,6 +83,11 @@ class TricksController extends AbstractController
             $entityManager->flush();
 
             return $this->redirectToRoute('tricks_index');
+        } elseif ($form->isSubmitted()) {
+            $errors = $form->getErrors(true);
+            foreach ($errors as $error) {
+                $this->addFlash('notice', $error->getMessage());
+            }
         }
 
         return $this->render(
@@ -117,7 +122,7 @@ class TricksController extends AbstractController
             $entityManager->flush();
         }
 
-        $limit = 6;
+        $limit = 10;
         $page = $request->query->getInt('page', 1);
         $page = $page === 0 ? 1 : $page;
         $comments = $commentRepository->getPaginatedComments($page, $limit, $trick->getId());
@@ -145,8 +150,7 @@ class TricksController extends AbstractController
         Tricks $trick,
         EntityManagerInterface $entityManager,
         ImagesService $imagesService,
-        VideosService $videosService,
-        ToolsService $tools
+        VideosService $videosService
     ): Response {
 
         $form = $this->createForm(TricksType::class, $trick);
