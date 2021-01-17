@@ -18,4 +18,4 @@
 .idea
 #.env
 .env.test
-/public/uploads
+#/public/uploads
